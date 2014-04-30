@@ -47,18 +47,9 @@ public class ReservaHospedagem implements Serializable{
 	@Temporal(TemporalType.DATE)
 	private Date dataHoraSaida;
 	
-	@Column(name = "MotivoDaViagem")
-	private String motivoDaViagem;
-	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "SituacaoDaReserva")
 	private SituacaoDaReserva situacaoDaReserva;
-	
-	@Column(name = "CpfAcompanhante")
-	private String cpfAcompanhante;
-	
-	@Column(name = "NomeAcompanhante")
-	private String nomeAcompanhante;
 
 	public ReservaHospedagem() {
 		super();
@@ -112,35 +103,11 @@ public class ReservaHospedagem implements Serializable{
 		this.dataHoraSaida = dataHoraSaida;
 	}
 
-	public String getMotivoDaViagem() {
-		return motivoDaViagem;
-	}
-
-	public void setMotivoDaViagem(String motivoDaViagem) {
-		this.motivoDaViagem = motivoDaViagem;
-	}
-
 	public SituacaoDaReserva getSituacaoDaReserva() {
 		return situacaoDaReserva;
 	}
 
 	public void setSituacaoDaReserva(SituacaoDaReserva situacaoDaReserva) {
 		this.situacaoDaReserva = situacaoDaReserva;
-	}
-
-	public String getCpfAcompanhante() {
-		return cpfAcompanhante;
-	}
-
-	public void setCpfAcompanhante(String cpfAcompanhante) {
-		this.cpfAcompanhante = cpfAcompanhante;
-	}
-
-	public String getNomeAcompanhante() {
-		return nomeAcompanhante;
-	}
-
-	public void setNomeAcompanhante(String nomeAcompanhante) {
-		this.nomeAcompanhante = nomeAcompanhante;
 	}
 }

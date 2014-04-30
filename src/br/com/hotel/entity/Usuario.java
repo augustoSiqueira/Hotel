@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -33,6 +35,10 @@ public class Usuario implements Serializable{
 
 	@Column(name="Email", length = 100)
 	private String email;
+	
+	@OneToOne(mappedBy = "usuario")
+	@JoinColumn(name = "Cliente")
+	private Cliente cliente;
 	
 	//private Cliente cliente;
 
