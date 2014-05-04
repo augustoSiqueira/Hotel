@@ -1,17 +1,17 @@
 package br.com.hotel.daoImp;
 
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
-  
-
-
-
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import br.com.hotel.dao.GenericoDAO;
@@ -130,8 +130,33 @@ public abstract class GenericoDAOImp<Entidade> implements GenericoDAO<Entidade>{
         }
     }
   
-      
-      
+    /**
+     * Remove o objeto da base de dados pela ID.
+     * 
+     * @param objeto
+     *            a ser removido
+     */
+    
+	@Override
+	public void removerPorId(Integer id) {
+		Entidade objeto = this.consultarPorId(id);
+		if (objeto != null) {
+			objeto = entityManager.merge(objeto);
+			entityManager.remove(objeto);
+		}
+	}
+	
+	public List<Type> findParameter(String query) {
+		if (entityManager == null) {
+			return null;
+		}
+		
+		Query  q = entityManager.createQuery(query);
+				
+		return q.getResultList();
+	}
+
+
     /**
      * Busca o objeto uma vez passado sua chave como parâmetro.
      * 
@@ -159,6 +184,42 @@ public abstract class GenericoDAOImp<Entidade> implements GenericoDAO<Entidade>{
         }
         return null;
     }
+    
+    /**
+     * Implementa uma query JPQL para fazer pesquisas
+     * */
+    
+	@Override
+	public List<Entidade> useQuery(String query, Map<String, Object> parametros) {
+		Query q = this.entityManager.createQuery(query);
+		
+		if(parametros != null){
+			Iterator<String> iterador = parametros.keySet().iterator();
+			while(iterador.hasNext()){
+				String chave = iterador.next();
+				q.setParameter(chave,parametros.get(chave));
+			}
+		}
+		return q.getResultList();		
+	}
+	
+	@Override
+	public List<Entidade> useQuery(String query, Map<String, Object> parametros,
+			Integer indiceInicial, Integer indiceFinal) {
+		Query q = this.entityManager.createQuery(query);
+		
+		if(parametros != null){
+			Iterator<String> iterador = parametros.keySet().iterator();
+			while (iterador.hasNext()) {
+				String chave = iterador.next();
+				q.setParameter(chave, parametros.get(chave));
+			}
+		}
+		q.setFirstResult(indiceInicial);
+		q.setMaxResults(indiceFinal);
+		return q.getResultList();		
+	}
+
   
     /**
      * Atualiza o objeto que se encontra em memória.
