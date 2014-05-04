@@ -36,7 +36,7 @@ public class Usuario implements Serializable{
 	@Column(name="Email", length = 100)
 	private String email;
 	
-	@OneToOne(mappedBy = "usuario")
+	@OneToOne
 	@JoinColumn(name = "Cliente")
 	private Cliente cliente;
 	

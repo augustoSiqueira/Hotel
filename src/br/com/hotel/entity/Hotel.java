@@ -26,6 +26,8 @@ public class Hotel implements Serializable{
 	@Embedded
 	@Column(name = "Endereco")
 	private Endereco endereco;
+	@Column(name = "Ativo")
+	private boolean ativo;
 	
 	public Hotel() {
 		super();
@@ -61,5 +63,13 @@ public class Hotel implements Serializable{
 
 	public void setEndereco(Endereco endereco) {
 		this.endereco = endereco;
+	}
+
+	public boolean isAtivo() {
+		return ativo;
+	}
+
+	public void setAtivo(boolean ativo) {
+		this.ativo = ativo;
 	}
 }
