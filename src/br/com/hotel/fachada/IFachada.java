@@ -5,6 +5,7 @@ import java.util.List;
 import br.com.hotel.entity.Apartamento;
 import br.com.hotel.entity.Cliente;
 import br.com.hotel.entity.Hotel;
+import br.com.hotel.entity.ImagemApartamento;
 import br.com.hotel.entity.ReservaHospedagem;
 import br.com.hotel.entity.TipoApartamento;
 import br.com.hotel.entity.Usuario;
@@ -27,6 +28,9 @@ public interface IFachada {
 	public void removerUsuarioPorId(Integer id);
 	public List<Usuario> consultarTodosUsuario();
 	public Usuario consultarUsuarioPorId(Integer id);
+	public boolean existeLogin(String login);
+	public List<Usuario> consultarUsuariosClientes();
+	public List<Usuario> consultarUsuariosAdministradores();
 	
 	
 //	CRUD DE APARTAMENTO
@@ -35,8 +39,10 @@ public interface IFachada {
 	public void removerApartamento(Apartamento apartamento);
 	public void removerApartamentoPorId(Integer id);
 	public List<Apartamento> consultarTodosApartamento();
+	public List<Apartamento> consultarTodosApartamentoAtivos();
 	public Apartamento consultarApartamentoPorId(Integer id);
-	
+	public List<Apartamento> consultarApartamentosNaoVinculados();
+	public List<Apartamento> consultarTodosApartamentoAtivosDoHotel(Integer id);
 	
 //	CRUD DE HOTEL
 	public void inserirHotel(Hotel hotel);
@@ -45,7 +51,10 @@ public interface IFachada {
 	public void removerHotelPorId(Integer id);
 	public List<Hotel> consultarTodosHotel();
 	public Hotel consultarHotelPorId(Integer id);
-	
+	public List<Hotel> consultarTodosHoteisAtivos();
+	public boolean consultarHotelPorCnpj(String cnpj);
+	public boolean consultarHotelPorCep(String cep);
+
 	
 //	CRUD DE ReservaHospedagem
 	public void inserirReservaHospedagem(ReservaHospedagem reservaHospedagem);
@@ -54,6 +63,9 @@ public interface IFachada {
 	public void removerReservaHospedagemPorId(Integer id);
 	public List<ReservaHospedagem> consultarTodosReservaHospedagem();
 	public ReservaHospedagem consultarReservaHospedagemPorId(Integer id);
+	public List<ReservaHospedagem> consultarTodosReservaHospedagemCanceladas();
+	public List<ReservaHospedagem> consultarTodosReservaHospedagemEmEspera();
+	public List<ReservaHospedagem> consultarTodosReservaHospedagemComExito();
 	
 	
 //	CRUD DE TipoApartamento
@@ -63,4 +75,19 @@ public interface IFachada {
 	public void removerTipoApartamentoPorId(Integer id);
 	public List<TipoApartamento> consultarTodosTipoApartamento();
 	public TipoApartamento consultarTipoApartamentoPorId(Integer id);
+	
+	
+	
+//	CRUD DE ImagemApartamento
+	public void inserirImagemApartamento(ImagemApartamento imagemApartamento);
+	public void alterarImagemApartamento(ImagemApartamento imagemApartamento);
+	public void removerImagemApartamento(ImagemApartamento imagemApartamento);
+	public void removerImagemApartamentoPorId(Integer id);
+	public List<ImagemApartamento> consultarTodosImagemApartamento();
+	public ImagemApartamento consultarImagemApartamentoPorId(Integer id);
+	
+	
+//	LOGAR
+	public Usuario logar(String login, String senha);
+
 }

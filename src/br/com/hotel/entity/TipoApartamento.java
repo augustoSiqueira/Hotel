@@ -64,4 +64,12 @@ public class TipoApartamento implements Serializable{
 	public void setAtivo(boolean ativo) {
 		this.ativo = ativo;
 	}
+
+	public Double getValorDoApartamento() {
+		return valorDoApartamento;
+	}
+
+	public void setValorDoApartamento(Double valorDoApartamento) {
+		this.valorDoApartamento = valorDoApartamento;
+	}
 }

@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+	<title>Hotel Web</title>
+	<link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+
+</h:head>
+
+<h:body>
+
+<h:form id="formUsuario" style="font-size:12px;width:98%;">
+
+<p:growl id="idGrowl" showDetail="true" life="3000" autoUpdate="true"/>
+
+<p:commandButton  icon="ui-icon-disk" actionListener="#{usuarioBean.abrirCadastroUsuario}" 
+value="#{msg['titulo.usuario.cadastrar']}"	title="Cadastrar um usuário"/>
+
+<p:spacer width="460" height="1"/>
+<p:commandButton  icon="ui-icon-disk" actionListener="#{usuarioBean.listarUsuariosClientes}" 
+value="#{msg['listar.user.cliente']}" title="Listar usuários com Tipo Usuário CLIENTE" update=":formUsuario:tableUsuario"/>
+
+<p:commandButton  icon="ui-icon-disk" actionListener="#{usuarioBean.listarAdministradores}" disabled="#{usuarioBean.botaoListar}" 
+value="#{msg['listar.user.adm']}" title="Listar usuários com Tipo Usuário ADMIN" update=":formUsuario:tableUsuario"/>
+
+		<p:dataTable var="user" value="#{usuarioBean.listaUsuario}"
+			rowKey="#{user.idUsuario}" paginator="true" rows="10"
+			filterEvent="enter"	scrollRows="10" scrollable="true"
+			liveScroll="false" filteredValue="#{usuarioBean.listaFiltroUsuario}"
+			paginatorPosition="bottom"	emptyMessage="#{msg['lista.vazia']}"
+			 id="tableUsuario">
+
+			<f:facet name="header" style="font-size:12pt;">  
+            	#{msg['titulo.lista.usuario']}  
+        	</f:facet>
+
+			<p:column headerText="#{msg['usuario.nome']}" sortBy="#{user.nome}"
+				filterBy="#{user.nome}" id="nome">  
+            	#{user.nome}  
+        	</p:column>
+        	
+        	<p:column headerText="#{msg['usuario.login']}" sortBy="#{user.login}"
+				filterBy="#{user.login}" id="login">  
+            	#{user.login}  
+        	</p:column>
+        	
+        	<p:column headerText="#{msg['usuario.email']}" sortBy="#{user.email}"
+				filterBy="#{user.email}" id="email">  
+            	#{user.email}  
+        	</p:column>
+	
+        	<p:column headerText="#{msg['tabela.coluna.detalhe']}">
+	        	<center>
+					<p:commandButton icon="ui-icon-zoomin"
+						title="#{msg['titulo.botao.tabela.detalhe']}"
+						action="#{usuarioBean.detalhesUsuario}" update=":formDetalhes" ajax="true">
+						<f:setPropertyActionListener value="#{user}"
+							target="#{usuarioBean.usuarioSelecionado}" />
+					</p:commandButton>
+				</center>
+			</p:column>
+			
+			<p:column headerText="#{msg['tabela.coluna.editar']}">
+				<center>
+					<p:commandButton icon="ui-icon-pencil"
+						title="#{msg['titulo.botao.tabela.editar']}"
+						action="#{usuarioBean.editarUsuario}" update=":formAlterar" ajax="true">
+						<f:setPropertyActionListener value="#{user}"
+							target="#{usuarioBean.usuarioSelecionado}" />
+					</p:commandButton>
+				</center>
+			</p:column>
+			
+			<p:column headerText="#{msg['tabela.coluna.excluir']}">
+				<center>
+			  		<p:column headerText="#{msg['tabela.coluna.excluir']}" style="text-align: center; max-width:50px; min-width:50px; overflow: hidden ">
+						<p:commandButton icon="ui-icon-minus" title="#{msg['titulo.botao.tabela.excluir']}" onclick="confirmation.show()" update=":formUsuario:tableUsuario">
+							<f:setPropertyActionListener value="#{user}" target="#{usuarioBean.usuarioSelecionado}" />
+						</p:commandButton>
+					</p:column>
+				</center>
+			</p:column>
+		</p:dataTable>
+</h:form>
+
+
+<h:form id="formDetalhes" style="font-size:10px;">
+
+		<p:dialog draggable="false" header="#{msg['dialog.detalhes']}"
+			widgetVar="detalhesDialog" resizable="false" modal="true" width="27%"
+			height="150" showEffect="explode" hideEffect="explode"
+			style="font-size:8pt;">
+
+			<h:panelGrid id="display" columns="2" cellpadding="4"
+				style="font-size:8pt;">
+
+				<h:outputText value="#{msg['usuario.nome']}" />
+				<h:outputText value="#{usuarioBean.usuarioSelecionado.nome}" />
+					
+				<h:outputText value="#{msg['usuario.email']}" />
+				<h:outputText value="#{usuarioBean.usuarioSelecionado.email}" />
+
+				<h:outputText value="#{msg['usuario.login']}" />
+				<h:outputText value="#{usuarioBean.usuarioSelecionado.login}" />
+
+				<h:outputText value="#{msg['usuario.tipoUsuario']}" />
+				<p:selectOneMenu id="idDetalhe"
+					style="heigth:140px; font-size:8pt;"
+					value="#{usuarioBean.usuarioSelecionado.tipoUsuario}" effect="clip"
+					disabled="true">
+					<f:selectItem itemLabel="" itemValue="" />
+					<f:selectItems value="#{usuarioBean.listaUsuario}" var="model"
+						itemLabel="#{model.tipoUsuario}" itemValue="#{model.tipoUsuario}" />
+				</p:selectOneMenu>
+				
+			</h:panelGrid>
+		</p:dialog>
+	</h:form>
+
+<h:form id="formAlterar" style="font-size:10px;">
+
+		<p:dialog draggable="false" header="#{msg['dialog.alterar']}"
+			widgetVar="alterarDialog" resizable="false" modal="true" width="27%"
+			height="180" showEffect="explode" hideEffect="explode"
+			style="font-size:8pt;">
+
+			<h:panelGrid id="display" columns="2" cellpadding="4"
+				style="font-size:8pt;">
+
+				<h:outputText value="#{msg['usuario.nome']}" />
+				<p:inputText value="#{usuarioBean.usuarioSelecionado.nome}" />
+					
+				<h:outputText value="#{msg['usuario.email']}" />
+				<p:inputText value="#{usuarioBean.usuarioSelecionado.email}" />
+
+				<h:outputText value="#{msg['usuario.login']}" />
+				<p:inputText value="#{usuarioBean.usuarioSelecionado.login}" />
+
+				<h:outputText value="#{msg['usuario.tipoUsuario']}"/>
+				<p:selectOneMenu id="idAlterar"
+					style="heigth:140px; font-size:8pt;"
+					value="#{usuarioBean.usuarioSelecionado.tipoUsuario}" effect="clip" disabled="#{usuarioBean.botaoListar}">
+					<f:selectItem itemLabel="" itemValue="" />
+					<f:selectItems value="#{usuarioBean.listaTipoUsuario}" var="model"
+						itemLabel="#{model}" itemValue="#{model}" />
+				</p:selectOneMenu>
+				
+				<p:commandButton icon="ui-icon-disk" title="#{msg['botao.salvar']}" value="#{msg['botao.salvar']}" actionListener="#{usuarioBean.alterarUsuario}" />
+			
+			</h:panelGrid>
+		</p:dialog>
+	</h:form>
+
+	<h:form id="formCadastro" style="font-size:10px;">
+
+		<p:dialog draggable="false" header="#{msg['dialog.cadastrar']}"
+			widgetVar="cadastroDialog" resizable="false" modal="true" width="27%"
+			height="210" showEffect="explode" hideEffect="explode"
+			style="font-size:8pt;">
+
+			<h:panelGrid columns="2" cellpadding="4"
+				style="font-size:8pt;">
+
+				<h:outputText value="#{msg['usuario.nome']}" />
+				<p:inputText value="#{usuarioBean.usuario.nome}" />
+					
+				<h:outputText value="#{msg['usuario.email']}" />
+				<p:inputText value="#{usuarioBean.usuario.email}" />
+
+				<h:outputText value="#{msg['usuario.login']}" />
+				<p:inputText value="#{usuarioBean.usuario.login}" />
+				
+				<h:outputText value="#{msg['usuario.senha']}" />
+				<h:inputSecret value="#{usuarioBean.usuario.senha}" />
+
+				<h:outputText value="#{msg['usuario.tipoUsuario']}" />
+				<p:selectOneMenu id="idAlterar"
+					style="heigth:140px; font-size:8pt;"
+					value="#{usuarioBean.usuario.tipoUsuario}" effect="clip">
+					<f:selectItem itemLabel="" itemValue="" />
+					<f:selectItems value="#{usuarioBean.listaTipoUsuario}" var="model"
+						itemLabel="#{model}" itemValue="#{model}" />
+				</p:selectOneMenu>
+			</h:panelGrid>
+			<br/>
+			<p:commandButton icon="ui-icon-disk" title="#{msg['botao.salvar']}" value="#{msg['botao.salvar']}" actionListener="#{usuarioBean.cadastrarUsuario}" />
+		</p:dialog>
+	</h:form>
+
+					<!-- Confirmar exclusão --> 
+	<h:form id="dlgconf">
+		<p:confirmDialog message="#{msg['msg.confirmarExclusao']}" style="align:center;font-size:8pt;" hideEffect="explode"
+			header="#{msg['atencao']}" severity="alert" widgetVar="confirmation" modal="true">
+			<!--caso seja sim chamo o metodo excluir, e fecho o modal com o oncomplete, tenho o process que estou dizendo para processar o form, e update para atualizar a tabela-->
+			<p:commandButton id="btnSim" value="#{msg['botaoConfimar.sim']}" oncomplete="confirmation.hide();"
+				update=":formUsuario" actionListener="#{usuarioBean.excluirUsuario}" />
+			<!--caso seja não somente fecha o modal-->
+			<p:commandButton id="btnNao" value="#{msg['botaoConfimar.nao']}" onclick="confirmation.hide();" type="button" />
+		</p:confirmDialog>
+	</h:form>
+	
+
+</h:body>
+</html>

@@ -41,10 +41,10 @@ public class ReservaHospedagem implements Serializable{
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dataHoraPeriodoFinal;
 	
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date dataHoraEntrada;
 	
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date dataHoraSaida;
 	
 	@Enumerated(EnumType.STRING)
@@ -109,5 +109,21 @@ public class ReservaHospedagem implements Serializable{
 
 	public void setSituacaoDaReserva(SituacaoDaReserva situacaoDaReserva) {
 		this.situacaoDaReserva = situacaoDaReserva;
+	}
+
+	public Date getDataHoraPeriodoInicial() {
+		return dataHoraPeriodoInicial;
+	}
+
+	public void setDataHoraPeriodoInicial(Date dataHoraPeriodoInicial) {
+		this.dataHoraPeriodoInicial = dataHoraPeriodoInicial;
+	}
+
+	public Date getDataHoraPeriodoFinal() {
+		return dataHoraPeriodoFinal;
+	}
+
+	public void setDataHoraPeriodoFinal(Date dataHoraPeriodoFinal) {
+		this.dataHoraPeriodoFinal = dataHoraPeriodoFinal;
 	}
 }

@@ -1,0 +1,507 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+	<title>Hotel Web</title>
+	<link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+
+</h:head>
+<h:body>
+
+<h:form id="idFormProcessDialog">
+
+		<p:ajaxStatus onstart="processandoDialog.show();"
+			onsuccess="processandoDialog.hide();" />
+		<p:dialog modal="true" widgetVar="processandoDialog"
+			header="#{msg['ajax.processando']}" draggable="false"
+			closable="false" style="font-size:8pt;" resizable="false">
+			<p:graphicImage value="/images/ajax_loader.gif" />
+		</p:dialog>
+
+	</h:form>
+
+<h:form id="formHotel" style="font-size:12px;width:98%;">
+
+	
+
+	<p:growl id="idGrowl" showDetail="true" life="3000" autoUpdate="true"/>
+		
+	<p:commandButton  icon="ui-icon-disk" actionListener="#{hotelBean.abrirCadastroHotel}" 
+	value="#{msg['titulo.hotel.cadastrar']}" title="Cadastrar um Hotel"/>
+	
+	
+		<p:dataTable var="hot" value="#{hotelBean.listaHotel}"
+			rowKey="#{hot.idhotel}" paginator="true" rows="10"
+			filterEvent="enter"	scrollRows="10" scrollable="true"
+			liveScroll="false" filteredValue="#{hotelBean.listaFiltroHotel}"
+			paginatorPosition="bottom"	emptyMessage="#{msg['lista.vazia']}"
+			 id="tableHotel">
+
+			<f:facet name="header" style="font-size:12pt;">  
+            	#{msg['titulo.lista.hotel']}  
+        	</f:facet>
+
+			<p:column headerText="#{msg['hotel.nomeHotel']}" sortBy="#{hot.nomeHotel}"
+				filterBy="#{hot.nomeHotel}" id="nomeHotel">  
+            	#{hot.nomeHotel}  
+        	</p:column>
+        	
+        	<p:column headerText="#{msg['hotel.cnpj']}" sortBy="#{hot.cnpj}"
+				filterBy="#{hot.cnpj}" id="cnpj">  
+            	#{hot.cnpj}  
+        	</p:column>
+	
+        	<p:column headerText="#{msg['tabela.coluna.detalhe']}">
+	        	<center>
+					<p:commandButton icon="ui-icon-zoomin"
+						title="#{msg['titulo.botao.tabela.detalhe']}"
+						action="#{hotelBean.detalhesHotel}" update=":formDetalhes" ajax="true">
+						<f:setPropertyActionListener value="#{hot}"
+							target="#{hotelBean.hotelSelecionado}" ajax="true"/>
+					</p:commandButton>
+				</center>
+			</p:column>
+			
+			<p:column headerText="#{msg['tabela.coluna.editar']}">
+				<center>
+					<p:commandButton icon="ui-icon-pencil"
+						title="#{msg['titulo.botao.tabela.editar']}"
+						action="#{hotelBean.editarHotel}" update=":formAlterar" ajax="true">
+						<f:setPropertyActionListener value="#{hot}"
+							target="#{hotelBean.hotelSelecionado}" />
+					</p:commandButton>
+				</center>
+			</p:column>
+			
+			<p:column headerText="#{msg['tabela.coluna.excluir']}">
+				<center>
+			  		<p:column headerText="#{msg['tabela.coluna.excluir']}" style="text-align: center; max-width:50px; min-width:50px; overflow: hidden ">
+						<p:commandButton icon="ui-icon-trash" title="#{msg['titulo.botao.tabela.excluir']}" onclick="confirmation.show()" update=":formHotel:tableHotel">
+							<f:setPropertyActionListener value="#{hot}" target="#{hotelBean.hotelSelecionado}" />
+						</p:commandButton>
+					</p:column>
+				</center>
+			</p:column>
+		</p:dataTable>
+</h:form>
+	
+	<h:form id="formDetalhes" style="font-size:10px;">
+
+		<p:dialog draggable="false" header="#{msg['dialog.detalhes']}"
+			widgetVar="detalhesDialog" resizable="false" modal="true" width="48%" showEffect="explode" hideEffect="explode"
+			style="font-size:8pt;">
+
+			<h:panelGrid id="panelDetalhe" columns="4" cellpadding="4"
+				style="font-size:8pt;">
+
+				<h:outputText value="#{msg['hotel.nomeHotel2']}" />
+				<h:outputText value="#{hotelBean.hotelSelecionado.nomeHotel}" />
+					
+				<h:outputText value="#{msg['hotel.endereco.numero']}" />
+				<h:outputText value="#{hotelBean.hotelSelecionado.endereco.numero}" />
+				
+				<h:outputText value="#{msg['hotel.cnpj2']}" />
+				<h:outputText value="#{hotelBean.hotelSelecionado.cnpj}" />
+				
+				<h:outputText value="#{msg['hotel.endereco.logradouro']}" />
+				<h:outputText value="#{hotelBean.hotelSelecionado.endereco.logradouro}" />
+				
+				<h:outputText value="#{msg['hotel.endereco.cep']}" />
+				<h:outputText value="#{hotelBean.hotelSelecionado.endereco.cep}" />
+
+				<h:outputText value="#{msg['hotel.endereco.cidade']}" />
+				<h:outputText value="#{hotelBean.hotelSelecionado.endereco.cidade}" />
+				
+				<h:outputText value="#{msg['hotel.endereco.estado']}" />
+				<h:outputText value="#{hotelBean.hotelSelecionado.endereco.estado}" />
+				
+				<h:outputText value="#{msg['hotel.endereco.bairro']}" />
+				<h:outputText value="#{hotelBean.hotelSelecionado.endereco.bairro}" />
+				
+				<h:outputText value="" />
+				<h:outputText value="" />
+				
+				<h:outputText value="#{msg['hotel.endereco.complemento']}" />
+				<h:outputText value="#{hotelBean.hotelSelecionado.endereco.complemento}" />
+
+			</h:panelGrid>
+				
+				<h:panelGrid columns="1">
+					<p:dataTable var="apart" value="#{hotelBean.listaApartamento}"
+					rowKey="#{apart.idApartamento}" paginator="true" rows="5"
+					filterEvent="enter"	scrollRows="5" scrollable="true"
+					liveScroll="false" filteredValue="#{hotelBean.listaApartamentoFiltro}"
+					paginatorPosition="bottom"	emptyMessage="#{msg['lista.vazia']}"
+					 id="tableApartamento" style="width:500px;">
+					 
+					<f:facet name="header" style="font-size:12pt;">  
+	            		#{msg['titulo.lista.apartamento']}  
+	        		</f:facet>
+	        		
+	        		<p:column headerText="#{msg['titulo.tipoApartamento.nome']}" sortBy="#{apart.tipoApartamento.nome}"
+					filterBy="#{apart.tipoApartamento.nome}">  
+	            		#{apart.tipoApartamento.nome}  
+	        		</p:column>
+
+					<p:column headerText="#{msg['titulo.apartamento.qntQuartos']}" sortBy="#{apart.quantidadeQuartos}"
+					filterBy="#{apart.quantidadeQuartos}">  
+            			#{apart.quantidadeQuartos}  
+        			</p:column>
+        			
+        		<p:column headerText="#{msg['tabela.coluna.detalhe']}">
+		        	<center>
+						<p:commandButton icon="ui-icon-zoomin"
+							title="#{msg['titulo.botao.tabela.detalhe']}"
+							action="#{hotelBean.detalhesApartamento}" ajax="true">
+							<f:setPropertyActionListener value="#{apart}"
+								target="#{hotelBean.apartamentoSelecionado}" />
+						</p:commandButton>
+					</center>
+				</p:column>
+
+				</p:dataTable>
+				</h:panelGrid>
+		</p:dialog>
+	</h:form>
+	
+	
+	<h:form id="formDetalhesApartamento" style="font-size:10px;">
+
+		<p:dialog draggable="false" header="#{msg['dialog.detalhes']}"
+			widgetVar="detalhesApartamentoDialog" resizable="false" modal="true" width="39%"
+			height="400" showEffect="explode" hideEffect="explode"
+			style="font-size:8pt;" closable="true">
+
+			<h:panelGrid columns="2" cellpadding="4"
+				style="font-size:8pt;">
+
+			
+				<h:outputText value="#{msg['apartamento.numeroApt']}" />
+				<h:outputText value="#{hotelBean.numeroApartamento}"/>
+	
+				<h:outputText value="#{msg['apartamento.andar2']}" />
+				<h:outputText value="#{hotelBean.apartamentoSelecionado.andar}"/>
+
+				<h:outputText value="#{msg['apartamento.qntQuartos']}" />
+				<h:outputText value="#{hotelBean.quantidadeQuartos}"/>
+				
+			</h:panelGrid>
+
+			<h:panelGrid columns="1">				
+					<p:imageSwitch effect="fade" style="width:400px;height:288px;">
+				    <ui:repeat value="#{hotelBean.listaImagensApartamento}" var="image" >
+				        <p:graphicImage value="/imagesApartamento/#{image.url}" width="400" height="288" title="Imagens do Apartamento"/>
+				    </ui:repeat>
+					</p:imageSwitch>
+			</h:panelGrid>
+		</p:dialog>
+	</h:form>
+	
+	<h:form id="formCadastro" style="font-size:10px;">
+
+		<p:dialog draggable="false" header="#{msg['dialog.cadastrar']}"
+			widgetVar="cadastroDialog" resizable="false" modal="true" width="48%" showEffect="explode" hideEffect="explode"
+			style="font-size:8pt;">
+
+			<h:panelGrid columns="4" cellpadding="5" style="font-size:8pt;">
+
+				<h:outputText value="#{msg['hotel.nomeHotel2']}" />
+				<p:inputText value="#{hotelBean.hotel.nomeHotel}" />
+					
+				<h:outputText value="#{msg['hotel.cnpj2']}" />
+				<p:inputMask value="#{hotelBean.hotel.cnpj}" mask="99.999.999/9999-99" />
+			</h:panelGrid>
+
+			<h:panelGrid columns="1">
+				<p:dataTable var="apart" value="#{hotelBean.listaApartamento}"
+					rowKey="#{apart.idApartamento}" paginator="true" rows="2"
+					filterEvent="enter" scrollRows="2" scrollable="true"
+					liveScroll="false"
+					filteredValue="#{hotelBean.listaApartamentoFiltro}"
+					paginatorPosition="bottom" emptyMessage="#{msg['lista.vazia']}"
+					id="tableApartamento" style="width:500px;">
+
+					<f:facet name="header" style="font-size:12pt;">  
+	            		#{msg['titulo.lista.apartamento']}  
+	        		</f:facet>
+
+					<p:column headerText="#{msg['titulo.tipoApartamento.nome']}"
+						sortBy="#{apart.tipoApartamento.nome}"
+						filterBy="#{apart.tipoApartamento.nome}">  
+	            		#{apart.tipoApartamento.nome}  
+	        		</p:column>
+
+					<p:column headerText="#{msg['titulo.apartamento.qntQuartos']}" 
+						sortBy="#{apart.quantidadeQuartos}"
+						filterBy="#{apart.quantidadeQuartos}">  
+            			#{apart.quantidadeQuartos}  
+        			</p:column>
+        			
+        			<p:column headerText="#{msg['tabela.coluna.cadastro']}">
+						<center> <p:commandButton icon="ui-icon-plusthick"
+							title="#{msg['titulo.botao.tabela.cadastro']}"
+							action="#{hotelBean.adicionarApartamento}" update=":formCadastro:tableApartamento"
+							ajax="true">
+							<f:setPropertyActionListener value="#{apart}"
+								target="#{hotelBean.apartamentoSelecionado}" />
+						</p:commandButton> </center>
+					</p:column>
+
+					<p:column headerText="#{msg['tabela.coluna.detalhe']}">
+						<center> <p:commandButton icon="ui-icon-zoomin"
+							title="#{msg['titulo.botao.tabela.detalhe']}"
+							action="#{hotelBean.detalhesApartamento}"
+							ajax="true">
+							<f:setPropertyActionListener value="#{apart}"
+								target="#{hotelBean.apartamentoSelecionado}" />
+						</p:commandButton> </center>
+					</p:column>
+
+				</p:dataTable>
+			</h:panelGrid>
+
+			<p:panel id="panelEndereco" header="#{msg['titulo.endereco']}" style="width:500px;">
+			<h:panelGrid columns="2" style="font-size:8pt;">
+				
+				<h:panelGrid columns="4" style="font-size:8pt;">
+				
+				<p:outputLabel value="#{msg['hotel.endereco.cep']}" />
+				<p:inputMask mask="99999-999"
+					value="#{hotelBean.endereco.cep}" />
+
+				<h:outputText value="#{msg['hotel.endereco.logradouro']}" />
+				<p:inputText value="#{hotelBean.endereco.logradouro}" disabled="true"/>
+
+				<h:outputText value="#{msg['hotel.endereco.numero']}" />
+				<p:inputText value="#{hotelBean.endereco.numero}" />
+
+				<h:outputText value="#{msg['hotel.endereco.bairro']}" />
+				<p:inputText value="#{hotelBean.endereco.bairro}" disabled="true" />
+	
+				<h:outputText value="#{msg['hotel.endereco.complemento']}" />
+				<p:inputText value="#{hotelBean.endereco.complemento}" />
+	
+				<h:outputText value="#{msg['hotel.endereco.cidade']}" />
+				<p:inputText value="#{hotelBean.endereco.cidade}"	disabled="true" />
+			
+				<h:outputText value=" " />
+				<h:outputText value=" " />
+			
+				<h:outputText value="#{msg['hotel.endereco.estado']}" />
+				<p:inputText value="#{hotelBean.endereco.estado}"	disabled="true" />
+			
+				<p:commandButton icon="ui-icon-search" title="#{msg['botao.filtrar']}"
+					value="#{msg['botao.filtrar']}"
+					actionListener="#{hotelBean.filtrarCep}" />
+		
+				</h:panelGrid>
+				
+			</h:panelGrid>
+			</p:panel>
+			
+			<p:commandButton icon="ui-icon-disk" title="#{msg['botao.salvar']}" value="#{msg['botao.salvar']}" 
+			actionListener="#{hotelBean.cadastrarHotel}" disabled="#{hotelBean.mostrarBotoes}"/>
+		</p:dialog>
+	</h:form>
+
+	<h:form id="formAlterar" style="font-size:10px;">
+
+		<p:dialog draggable="false" header="#{msg['dialog.alterar']}"
+			widgetVar="alterarDialog" resizable="false" modal="true" width="48%" showEffect="explode" hideEffect="explode"
+			style="font-size:8pt;" closable="true">
+
+			<h:panelGrid columns="4" cellpadding="5" style="font-size:8pt;">
+
+				<h:outputText value="#{msg['hotel.nomeHotel2']}" />
+				<p:inputText value="#{hotelBean.hotelSelecionado.nomeHotel}" />
+					
+				<h:outputText value="#{msg['hotel.cnpj2']}" />
+				<p:inputMask value="#{hotelBean.hotelSelecionado.cnpj}" mask="99.999.999/9999-99" />
+			</h:panelGrid>
+
+			<h:panelGrid columns="1">
+				<p:commandButton icon="ui-icon-plusthick"
+					title="#{msg['titulo.botao.tabela.cadastro']}"
+					value="Adicionar Apartamento(s)"
+					action="#{hotelBean.abrirListaApartamento}" ajax="true">
+				</p:commandButton>
+				
+				<p:dataTable var="apart" value="#{hotelBean.listaApartamento}"
+					rowKey="#{apart.idApartamento}" paginator="true" rows="2"
+					filterEvent="enter" scrollRows="2" scrollable="true"
+					liveScroll="false"
+					filteredValue="#{hotelBean.listaApartamentoFiltro}"
+					paginatorPosition="bottom" emptyMessage="#{msg['lista.vazia']}"
+					id="tableAlterarApartamento" style="width:500px;">
+
+					<f:facet name="header" style="font-size:12pt;">  
+	            		#{msg['titulo.lista.apartamento']}  
+	        		</f:facet>
+
+					<p:column headerText="#{msg['titulo.tipoApartamento.nome']}"
+						sortBy="#{apart.tipoApartamento.nome}"
+						filterBy="#{apart.tipoApartamento.nome}">  
+	            		#{apart.tipoApartamento.nome}  
+	        		</p:column>
+
+					<p:column headerText="#{msg['titulo.apartamento.qntQuartos']}" 
+						sortBy="#{apart.quantidadeQuartos}"
+						filterBy="#{apart.quantidadeQuartos}">  
+            			#{apart.quantidadeQuartos}  
+        			</p:column>
+        			
+					<p:column headerText="#{msg['tabela.coluna.detalhe']}">
+						<center> <p:commandButton icon="ui-icon-zoomin"
+							title="#{msg['titulo.botao.tabela.detalhe']}"
+							action="#{hotelBean.detalhesApartamento}"
+							ajax="true">
+							<f:setPropertyActionListener value="#{apart}"
+								target="#{hotelBean.apartamentoSelecionado}" />
+						</p:commandButton> </center>
+					</p:column>
+					
+					<p:column headerText="#{msg['tabela.coluna.excluir']}">
+						<center> <p:commandButton icon="ui-icon-trash"
+							title="#{msg['titulo.botao.tabela.excluir']}" onclick="confirmationDeletarApt.show()"
+							update=":formAlterar:tableAlterarApartamento" ajax="true">
+							<f:setPropertyActionListener value="#{apart}"
+								target="#{hotelBean.apartamentoSelecionado}" />
+						</p:commandButton> </center>
+					</p:column>
+
+				</p:dataTable>
+			</h:panelGrid>
+
+			<p:panel id="panelEndereco" header="#{msg['titulo.endereco']}" style="width:500px;">
+			<h:panelGrid columns="2" style="font-size:8pt;">
+				
+				<h:panelGrid columns="4" style="font-size:8pt;">
+				
+				<p:outputLabel value="#{msg['hotel.endereco.cep']}" />
+				<p:inputMask mask="99999-999"
+					value="#{hotelBean.endereco.cep}" />
+
+				<h:outputText value="#{msg['hotel.endereco.logradouro']}" />
+				<p:inputText value="#{hotelBean.endereco.logradouro}" disabled="true"/>
+
+				<h:outputText value="#{msg['hotel.endereco.numero']}" />
+				<p:inputText value="#{hotelBean.endereco.numero}" />
+
+				<h:outputText value="#{msg['hotel.endereco.bairro']}" />
+				<p:inputText value="#{hotelBean.endereco.bairro}" disabled="true" />
+	
+				<h:outputText value="#{msg['hotel.endereco.complemento']}" />
+				<p:inputText value="#{hotelBean.endereco.complemento}" />
+	
+				<h:outputText value="#{msg['hotel.endereco.cidade']}" />
+				<p:inputText value="#{hotelBean.endereco.cidade}"	disabled="true" />
+			
+				<h:outputText value=" " />
+				<h:outputText value=" " />
+			
+				<h:outputText value="#{msg['hotel.endereco.estado']}" />
+				<p:inputText value="#{hotelBean.endereco.estado}"	disabled="true" />
+			
+				<p:commandButton icon="ui-icon-search" title="#{msg['botao.filtrar']}"
+					value="#{msg['botao.filtrar']}"
+					actionListener="#{hotelBean.filtrarCep}" />
+		
+				</h:panelGrid>
+				
+			</h:panelGrid>
+			</p:panel>
+			
+			<p:commandButton icon="ui-icon-disk" title="#{msg['botao.salvar']}" value="#{msg['botao.salvar']}" 
+			actionListener="#{hotelBean.alterarHotel}" />
+		</p:dialog>
+	</h:form>
+	
+		<h:form id="formAdicionarApartamento" style="font-size:10px;">
+
+		<p:dialog draggable="false" header="#{msg['dialog.cadastrar']}"
+			widgetVar="adicionarApartamentoDialog" resizable="false" modal="true" width="48%" showEffect="explode" hideEffect="explode"
+			style="font-size:8pt;">
+	
+				<h:panelGrid columns="1">
+				<p:dataTable var="apart" value="#{hotelBean.listaAlterarApartamento}"
+					rowKey="#{apart.idApartamento}" paginator="true" rows="2"
+					filterEvent="enter" scrollRows="2" scrollable="true"
+					liveScroll="false"
+					filteredValue="#{hotelBean.listaApartamentoFiltro}"
+					paginatorPosition="bottom" emptyMessage="#{msg['lista.vazia']}"
+					id="tableApartamento" style="width:500px;">
+
+					<f:facet name="header" style="font-size:12pt;">  
+	            		#{msg['titulo.lista.apartamento']}  
+	        		</f:facet>
+
+					<p:column headerText="#{msg['titulo.tipoApartamento.nome']}"
+						sortBy="#{apart.tipoApartamento.nome}"
+						filterBy="#{apart.tipoApartamento.nome}">  
+	            		#{apart.tipoApartamento.nome}  
+	        		</p:column>
+
+					<p:column headerText="#{msg['titulo.apartamento.qntQuartos']}" 
+						sortBy="#{apart.quantidadeQuartos}"
+						filterBy="#{apart.quantidadeQuartos}">  
+            			#{apart.quantidadeQuartos}  
+        			</p:column>
+        			
+        			<p:column headerText="#{msg['tabela.coluna.cadastro']}">
+						<center> <p:commandButton icon="ui-icon-plusthick"
+							title="#{msg['titulo.botao.tabela.cadastro']}"
+							action="#{hotelBean.adicionarApartamento2}" update=":formCadastro:tableApartamento"
+							ajax="true">
+							<f:setPropertyActionListener value="#{apart}"
+								target="#{hotelBean.apartamentoSelecionado}" />
+						</p:commandButton> </center>
+					</p:column>
+
+					<p:column headerText="#{msg['tabela.coluna.detalhe']}">
+						<center> <p:commandButton icon="ui-icon-zoomin"
+							title="#{msg['titulo.botao.tabela.detalhe']}"
+							action="#{hotelBean.detalhesApartamento}"
+							ajax="true">
+							<f:setPropertyActionListener value="#{apart}"
+								target="#{hotelBean.apartamentoSelecionado}" />
+						</p:commandButton> </center>
+					</p:column>
+
+				</p:dataTable>
+			</h:panelGrid>
+			
+		</p:dialog>
+			
+	</h:form>
+
+					<!-- Confirmar exclusão --> 
+	<h:form id="dlgconf">
+		<p:confirmDialog message="#{msg['msg.confirmarExclusao']}" style="align:center;font-size:8pt;" hideEffect="explode"
+			header="#{msg['atencao']}" severity="alert" widgetVar="confirmation" modal="true">
+			<!--caso seja sim chamo o metodo excluir, e fecho o modal com o oncomplete, tenho o process que estou dizendo para processar o form, e update para atualizar a tabela-->
+			<p:commandButton id="btnSim" value="#{msg['botaoConfimar.sim']}" oncomplete="confirmation.hide();"
+				update=":formHotel" actionListener="#{hotelBean.excluirHotel}" />
+			<!--caso seja não somente fecha o modal-->
+			<p:commandButton id="btnNao" value="#{msg['botaoConfimar.nao']}" onclick="confirmation.hide();" type="button" />
+		</p:confirmDialog>
+	</h:form>
+	
+						<!-- Confirmar exclusão Apt--> 
+	<h:form id="dlgconf2">
+		<p:confirmDialog message="#{msg['msg.confirmarExclusao']}" style="align:center;font-size:8pt;" hideEffect="explode"
+			header="#{msg['atencao']}" severity="alert" widgetVar="confirmationDeletarApt" modal="true">
+			<!--caso seja sim chamo o metodo excluir, e fecho o modal com o oncomplete, tenho o process que estou dizendo para processar o form, e update para atualizar a tabela-->
+			<p:commandButton id="btnSim" value="#{msg['botaoConfimar.sim']}" oncomplete="confirmationDeletarApt.hide();"
+				update=":formAlterar:tableAlterarApartamento" actionListener="#{hotelBean.excluirApartamento}" />
+			<!--caso seja não somente fecha o modal-->
+			<p:commandButton id="btnNao" value="#{msg['botaoConfimar.nao']}" onclick="confirmationDeletarApt.hide();" type="button" />
+		</p:confirmDialog>
+	</h:form>
+
+</h:body>
+</html>

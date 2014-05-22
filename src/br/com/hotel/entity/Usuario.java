@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,11 +32,15 @@ public class Usuario implements Serializable{
 	@Column(name="Login", length = 50, nullable = false)
 	private String login;
 	
-	@Column(name="Senha", length = 12, nullable = false)
+	@Column(name="Senha", length = 100, nullable = false)
 	private String senha;
 
 	@Column(name="Email", length = 100)
 	private String email;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "TipoUsuario")
+	private TipoUsuario tipoUsuario;
 	
 	@OneToOne
 	@JoinColumn(name = "Cliente")
@@ -92,5 +98,21 @@ public class Usuario implements Serializable{
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public TipoUsuario getTipoUsuario() {
+		return tipoUsuario;
+	}
+
+	public void setTipoUsuario(TipoUsuario tipoUsuario) {
+		this.tipoUsuario = tipoUsuario;
+	}
+
+	public Cliente getCliente() {
+		return cliente;
+	}
+
+	public void setCliente(Cliente cliente) {
+		this.cliente = cliente;
 	}
 }

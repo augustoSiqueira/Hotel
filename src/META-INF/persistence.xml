@@ -17,7 +17,7 @@
 			<property name="hibernate.hbm2ddl.auto" value="update" />
 			<property name="hibernate.show_sql" value="true" />
 			<property name="hibernate.format_sql" value="true" />
-			<property name="org.hibernate" value="info" />
+			<property name="org.hibernate" value="debug" />
 			<property name="org.hibernate.SQL.level" value="debug" />
 			<property name="org.hibernate.type.level" value="debug" />
 

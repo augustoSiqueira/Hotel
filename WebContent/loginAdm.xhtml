@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+	<title>Hotel Web</title>
+
+	<!-- 	<script src="http://maps.google.com/maps/api/js?sensor=true" -->
+	<!-- 		type="text/javascript"></script> -->
+
+	<link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+
+</h:head>
+
+<h:body>
+
+<p:layout fullPage="true" >
+  
+	   TOP
+    <p:layoutUnit position="north" size="40"  style="border-color:white;">  
+<!--        <p:graphicImage id="localCroppedImage" value="images/hotel2.jpg" /> -->
+    </p:layoutUnit>  
+  
+
+    <p:layoutUnit position="center" style="border-color:white;">
+
+			<h:form id="idFormLogin" style="font-size:10px;">
+				<p:growl id="idGrowl" autoUpdate="true"/>
+			<center>
+			<p:graphicImage value="images/hotel.jpg" />
+			   	<p:panel header="#{msg['login']}" style="width:320px;heigth:200px;">
+					   	<h:panelGrid columns="2">
+							<h:outputLabel value="#{msg['login2']}"/>
+							<p:inputText value="#{loginBean.login}"/>
+							
+							<h:outputLabel value="#{msg['senha']}"/>
+							<h:inputSecret value="#{loginBean.senha}"/>
+							
+							<h:commandButton value="#{msg['logar']}" actionListener="#{loginBean.logar}"/>
+							
+						</h:panelGrid>
+			    </p:panel>
+			    
+			</center>
+			</h:form>
+		
+	</p:layoutUnit>  
+  
+</p:layout> 
+
+</h:body>
+</html>

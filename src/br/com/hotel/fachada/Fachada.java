@@ -1,19 +1,24 @@
 package br.com.hotel.fachada;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import br.com.hotel.entity.Apartamento;
 import br.com.hotel.entity.Cliente;
 import br.com.hotel.entity.Hotel;
+import br.com.hotel.entity.ImagemApartamento;
 import br.com.hotel.entity.ReservaHospedagem;
 import br.com.hotel.entity.TipoApartamento;
 import br.com.hotel.entity.Usuario;
 import br.com.hotel.serviceImp.ApartamentoServiceImp;
 import br.com.hotel.serviceImp.ClienteServiceImp;
 import br.com.hotel.serviceImp.HotelServiceImp;
+import br.com.hotel.serviceImp.ImagemApartamentoServiceImp;
 import br.com.hotel.serviceImp.ReservaHospedagemServiceImp;
 import br.com.hotel.serviceImp.TipoApartamentoServiceImp;
 import br.com.hotel.serviceImp.UsuarioServiceImp;
+import br.com.hotel.util.Criptografar;
 
 public class Fachada implements IFachada{
 
@@ -25,6 +30,7 @@ public class Fachada implements IFachada{
 	private HotelServiceImp hotelServiceImp;
 	private ReservaHospedagemServiceImp reservaHospedagemServiceImp;
 	private TipoApartamentoServiceImp tipoApartamentoServiceImp;
+	private ImagemApartamentoServiceImp imagemApartamentoServiceImp;
 	
 	private Fachada() {
 		this.usuarioServiceImp = new UsuarioServiceImp();
@@ -33,6 +39,7 @@ public class Fachada implements IFachada{
 		this.hotelServiceImp = new HotelServiceImp();
 		this.reservaHospedagemServiceImp = new ReservaHospedagemServiceImp();
 		this.tipoApartamentoServiceImp = new TipoApartamentoServiceImp();
+		this.imagemApartamentoServiceImp = new ImagemApartamentoServiceImp();
 	}
 
 	public static synchronized Fachada getInstancia() {
@@ -74,7 +81,8 @@ public class Fachada implements IFachada{
 	public Cliente consultarClientePorId(Integer id) {
 		return this.clienteServiceImp.buscarPorId(id);
 	}
-
+	
+	
 
 	//	CONTROLE DE USUARIO
 	
@@ -106,6 +114,30 @@ public class Fachada implements IFachada{
 	@Override
 	public Usuario consultarUsuarioPorId(Integer id) {		
 		return this.usuarioServiceImp.buscarPorId(id);
+	}
+	
+	@Override
+	public List<Usuario> consultarUsuariosClientes() {
+		return this.usuarioServiceImp.consultarUsuariosClientes();
+	}	
+	
+	@Override
+	public List<Usuario> consultarUsuariosAdministradores() {
+		return this.usuarioServiceImp.consultarUsuariosAdministradores();
+	}	
+	
+	@Override
+	public boolean existeLogin(String login) {
+		String query = "FROM Usuario u WHERE u.ativo = true AND u.login=:login";
+		HashMap<String,Object> parametros = new HashMap<String, Object>();
+		parametros.put("login", login);
+		
+		List<Cliente> lista = this.clienteServiceImp.usarQuery(query, parametros);
+		
+		if (lista.size() == 0) {
+			return false;
+		}
+		return true;
 	}
 
 	
@@ -141,6 +173,18 @@ public class Fachada implements IFachada{
 		return this.apartamentoServiceImp.buscarPorId(id);
 	}
 	
+	//TODO: Este método retorna uma lista de apartamentos que tenha o código do hotel que o usuário selecionou
+	// 		o que for vinculado ao hotel e que seja ativo, ele irá listar
+	@Override
+	public List<Apartamento> consultarTodosApartamentoAtivosDoHotel(Integer id) {
+		return this.apartamentoServiceImp.consultarTodosApartamentosAtivosDoHotel(id);
+	}
+
+	@Override
+	public List<Apartamento> consultarApartamentosNaoVinculados() {
+		return this.apartamentoServiceImp.consultarTodosApartamentosNaoVinculados();
+	}
+	
 	
 //	CONTROLE DE HOTEL
 
@@ -173,7 +217,21 @@ public class Fachada implements IFachada{
 	public Hotel consultarHotelPorId(Integer id) {
 		return this.hotelServiceImp.buscarPorId(id);
 	}
+	
+	@Override
+	public List<Hotel> consultarTodosHoteisAtivos() {
+		return this.hotelServiceImp.consultarHoteisAtivos();
+	}
 
+	@Override
+	public boolean consultarHotelPorCnpj(String cnpj) {
+		return this.hotelServiceImp.consultarHotelPorCnpj(cnpj);
+	}
+	
+	@Override
+	public boolean consultarHotelPorCep(String cep) {
+		return this.hotelServiceImp.consultarHotelPorCep(cep);
+	}
 	
 //	CONTROLE DE ReservaHospedagem
 	@Override
@@ -232,9 +290,77 @@ public class Fachada implements IFachada{
 	public List<TipoApartamento> consultarTodosTipoApartamento() {
 		return this.tipoApartamentoServiceImp.listar();
 	}
+	
+	@Override
+	public List<Apartamento> consultarTodosApartamentoAtivos() {
+		return this.apartamentoServiceImp.consultarTodosApartamentosAtivos();
+	}
 
 	@Override
 	public TipoApartamento consultarTipoApartamentoPorId(Integer id) {
 		return this.tipoApartamentoServiceImp.buscarPorId(id);
+	}
+	
+	
+	//LOGAR
+
+	@Override
+	public Usuario logar(String login, String senha) {
+		Map<String,Object> parametros = new HashMap<String,Object>();
+		parametros.put("senha",Criptografar.gerarMd5(senha));
+		parametros.put("login",login);	
+		List<Usuario> usuarios = this.usuarioServiceImp.usarQuery("FROM Usuario u WHERE u.senha=:senha AND u.login=:login", parametros);
+
+		if(usuarios != null && usuarios.size() > 0){
+			return usuarios.get(0);
+		}
+		return null;
+	}
+
+	
+//	CONTROLE DE ImagemApartamento
+	@Override
+	public void inserirImagemApartamento(ImagemApartamento imagemApartamento) {
+		this.imagemApartamentoServiceImp.inserir(imagemApartamento);
+	}
+
+	@Override
+	public void alterarImagemApartamento(ImagemApartamento imagemApartamento) {
+		this.imagemApartamentoServiceImp.atualizar(imagemApartamento);
+	}
+
+	@Override
+	public void removerImagemApartamento(ImagemApartamento imagemApartamento) {
+		this.imagemApartamentoServiceImp.remover(imagemApartamento);
+	}
+
+	@Override
+	public void removerImagemApartamentoPorId(Integer id) {
+		this.imagemApartamentoServiceImp.removerPorId(id);
+	}
+
+	@Override
+	public List<ImagemApartamento> consultarTodosImagemApartamento() {
+		return this.imagemApartamentoServiceImp.listar();
+	}
+
+	@Override
+	public ImagemApartamento consultarImagemApartamentoPorId(Integer id) {
+		return this.imagemApartamentoServiceImp.buscarPorId(id);
+	}
+
+	@Override
+	public List<ReservaHospedagem> consultarTodosReservaHospedagemCanceladas() {
+		return this.reservaHospedagemServiceImp.consultarTodosReservaHospedagemCanceladas();
+	}
+	
+	@Override
+	public List<ReservaHospedagem> consultarTodosReservaHospedagemEmEspera() {
+		return this.reservaHospedagemServiceImp.consultarTodosReservaHospedagemEmEspera();
+	}
+	
+	@Override
+	public List<ReservaHospedagem> consultarTodosReservaHospedagemComExito(){
+		return this.reservaHospedagemServiceImp.consultarTodosReservaHospedagemComExito();
 	}
 }

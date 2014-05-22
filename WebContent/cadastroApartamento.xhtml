@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+	<title>Hotel Web</title>
+	<link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+
+</h:head>
+
+<h:body>
+
+<h:form id="formApartamento" style="font-size:12px;width:98%;">
+
+	<p:growl id="idGrowl" showDetail="true" life="3000" autoUpdate="true"/>
+
+	<p:commandButton  icon="ui-icon-disk" actionListener="#{apartamentoBean.abrirCadastroApartamento}" 
+	value="#{msg['titulo.apartamento.cadastrar']}"	title="Cadastrar Apartamento"/>
+
+		<p:dataTable var="apart" value="#{apartamentoBean.listaApartamento}"
+			rowKey="#{apart.idApartamento}" paginator="true" rows="10"
+			filterEvent="enter"	scrollRows="10" scrollable="true"
+			liveScroll="false" filteredValue="#{apartamentoBean.listaApartamentoFiltro}"
+			paginatorPosition="bottom"	emptyMessage="#{msg['lista.vazia']}"
+			 id="tableApartamento">
+
+			<f:facet name="header" style="font-size:12pt;">  
+            	#{msg['titulo.lista.apartamento']}  
+        	</f:facet>
+        	
+        	<p:column headerText="#{msg['titulo.hotel.nome']}" sortBy="#{apart.hotel.nomeHotel}"
+				filterBy="#{apart.hotel.nomeHotel}">  
+            	#{apart.hotel.nomeHotel}  
+        	</p:column>
+        	
+        	<p:column headerText="#{msg['titulo.tipoApartamento.nome']}" sortBy="#{apart.tipoApartamento.nome}"
+				filterBy="#{apart.tipoApartamento.nome}">  
+            	#{apart.tipoApartamento.nome}  
+        	</p:column>
+
+			<p:column headerText="#{msg['apartamento.andar']}" sortBy="#{apart.andar}"
+				filterBy="#{apart.andar}">  
+            	#{apart.andar}  
+        	</p:column>
+        	
+        	<p:column headerText="#{msg['titulo.apartamento.numeroApt']}" sortBy="#{apart.numeroApartamento}"
+				filterBy="#{apart.numeroApartamento}">  
+            	#{apart.numeroApartamento}  
+        	</p:column>
+        	
+        	<p:column headerText="#{msg['titulo.apartamento.qntQuartos']}" sortBy="#{apart.quantidadeQuartos}"
+				filterBy="#{apart.quantidadeQuartos}">  
+            	#{apart.quantidadeQuartos}  
+        	</p:column>
+        	
+        	
+        	<p:column headerText="#{msg['tabela.coluna.detalhe']}">
+	        	<center>
+					<p:commandButton icon="ui-icon-zoomin"
+						title="#{msg['titulo.botao.tabela.detalhe']}"
+						action="#{apartamentoBean.detalhesApartamento}" update=":formDetalhes" ajax="true">
+						<f:setPropertyActionListener value="#{apart}"
+							target="#{apartamentoBean.apartamentoSelecionado}" />
+					</p:commandButton>
+				</center>
+			</p:column>
+			
+			<p:column headerText="#{msg['tabela.coluna.editar']}">
+				<center>
+					<p:commandButton icon="ui-icon-pencil"
+						title="#{msg['titulo.botao.tabela.editar']}"
+						action="#{apartamentoBean.editarApartamento}" update=":formAlterar" ajax="true">
+						<f:setPropertyActionListener value="#{apart}"
+							target="#{apartamentoBean.apartamentoSelecionado}" />
+					</p:commandButton>
+				</center>
+			</p:column>
+			
+			<p:column headerText="#{msg['tabela.coluna.excluir']}">
+				<center>
+			  		<p:column headerText="#{msg['tabela.coluna.excluir']}" style="text-align: center; max-width:50px; min-width:50px; overflow: hidden ">
+						<p:commandButton icon="ui-icon-minus" title="#{msg['titulo.botao.tabela.excluir']}" onclick="confirmation.show()" update=":formApartamento:tableApartamento">
+							<f:setPropertyActionListener value="#{apart}" target="#{apartamentoBean.apartamentoSelecionado}" />
+						</p:commandButton>
+					</p:column>
+				</center>
+			</p:column>
+        	
+        </p:dataTable>
+</h:form>
+
+
+		<h:form id="formDetalhes" style="font-size:10px;">
+
+		<p:dialog draggable="false" header="#{msg['dialog.detalhes']}"
+			widgetVar="detalhesDialog" resizable="false" modal="true" width="27%"
+			height="150" showEffect="explode" hideEffect="explode"
+			style="font-size:8pt;" closable="true">
+
+			<h:panelGrid id="display" columns="2" cellpadding="4"
+				style="font-size:8pt;">
+
+			<h:panelGrid columns="2">
+				<h:outputText value="#{msg['apartamento.numeroApt']}" />
+				<h:outputText value="#{apartamentoBean.numeroApartamento}"/>
+	
+				<h:outputText value="#{msg['apartamento.andar2']}" />
+				<h:outputText value="#{apartamentoBean.apartamentoSelecionado.andar}"/>
+
+				<h:outputText value="#{msg['apartamento.qntQuartos']}" />
+				<h:outputText value="#{apartamentoBean.quantidadeQuartos}"/>
+				
+				<h:outputText value="#{msg['apartamento.tipoapartamento']}" />
+				<p:selectOneMenu style="width:145px; font-size:8pt;"
+					value="#{apartamentoBean.idTipoApartamento}" effect="clip" disabled="true">
+					<f:selectItem itemLabel="" itemValue="0" />
+					<f:selectItems value="#{apartamentoBean.listaTipoApartamento}" var="model"
+						itemLabel="#{model.nome}" itemValue="#{model.idTipoApartamento}" />
+				</p:selectOneMenu>
+			</h:panelGrid>
+				
+			</h:panelGrid>
+		</p:dialog>
+	</h:form>
+
+
+	<h:form id="formAlterar" style="font-size:10px;">
+
+		<p:dialog draggable="false" header="#{msg['dialog.alterar']}"
+			widgetVar="alterarDialog" resizable="false" modal="true" width="25%"
+			height="180" showEffect="explode" hideEffect="explode"
+			style="font-size:8pt;" closable="true">
+
+			<h:panelGrid id="display" columns="2" cellpadding="4"
+				style="font-size:8pt;">
+
+			<h:panelGrid columns="2">
+				<h:outputText value="#{msg['apartamento.numeroApt']}" />
+				<p:inputText value="#{apartamentoBean.numeroApartamento}" />
+	
+				<h:outputText value="#{msg['apartamento.andar2']}" />
+				<p:inputText value="#{apartamentoBean.apartamentoSelecionado.andar}" />
+
+				<h:outputText value="#{msg['apartamento.qntQuartos']}" />
+				<p:spinner value="#{apartamentoBean.quantidadeQuartos}" min="1" max="5" size="17" />
+				
+				<h:outputText value="#{msg['apartamento.tipoapartamento']}" />
+				<p:selectOneMenu style="width:145px; font-size:8pt;"
+					value="#{apartamentoBean.idTipoApartamento}" effect="clip" >
+					<f:selectItem itemLabel="" itemValue="0" />
+					<f:selectItems value="#{apartamentoBean.listaTipoApartamento}" var="model"
+						itemLabel="#{model.nome}" itemValue="#{model.idTipoApartamento}" />
+				</p:selectOneMenu>
+			</h:panelGrid>
+			<br/>
+<!-- 			<h:panelGrid columns="4"  -->
+<!-- 				style="font-size:8pt;"> -->
+			
+<!-- 				<h:panelGrid columns="4"/> -->
+<!-- 				<p:fileUpload id="imagem" fileUploadListener="#{apartamentoBean.upload}" -->
+<!-- 				required="true" label="Selecione os Arquivos" sizeLimit="1000000" -->
+<!-- 				description="Selecione os arquivos" multiple="true" -->
+<!-- 				dragDropSupport="true" mode="advanced" disabled="#{apartamentoBean.mudarImagem}" -->
+<!-- 				invalidSizeMessage="Tamanha maior que o permitido!" -->
+<!-- 				invalidFileMessage="Extensão não Permitida" -->
+<!-- 				uploadLabel="Subir Arquivos" requiredMessage="Precisa de 2 Arquivos" fileLimit="4"/> -->
+				
+<!-- 				<p:commandButton rendered="#{apartamentoBean.mudarImagem}" icon="ui-icon-pencil" title="#{msg['alterar.imagem']}" value="#{msg['alterar.imagem']}" actionListener="#{apartamentoBean.alterarImagem}" /> -->
+<!-- 			</h:panelGrid> -->
+			</h:panelGrid>
+				
+				<br/>
+			<p:commandButton icon="ui-icon-disk" title="#{msg['botao.salvar']}" value="#{msg['botao.salvar']}" actionListener="#{apartamentoBean.alterarApartamento}" />
+			
+		</p:dialog>
+	</h:form>
+
+	<h:form id="formCadastro" style="font-size:10px;">
+
+		<p:dialog draggable="false" header="#{msg['dialog.cadastrar']}"
+			widgetVar="cadastroDialog" resizable="false" modal="true" width="56%"
+			height="600" showEffect="explode" hideEffect="explode"
+			style="font-size:8pt;">
+
+			<h:panelGrid columns="2" cellpadding="4"
+				style="font-size:8pt;">
+
+				<h:outputText value="#{msg['apartamento.numeroApt']}" />
+				<p:inputText value="#{apartamentoBean.numeroApartamento}" />
+	
+				<h:outputText value="#{msg['apartamento.andar2']}" />
+				<p:inputText value="#{apartamentoBean.apartamento.andar}" />
+
+				<h:outputText value="#{msg['apartamento.qntQuartos']}" />
+				<p:spinner value="#{apartamentoBean.quantidadeQuartos}" min="1" max="5" />
+				
+				<h:outputText value="#{msg['apartamento.tipoapartamento']}" />
+				<p:selectOneMenu style="heigth:140px; font-size:8pt;"
+					value="#{apartamentoBean.idTipoApartamento}" effect="clip">
+					<f:selectItem itemLabel="" itemValue="0" />
+					<f:selectItems value="#{apartamentoBean.listaTipoApartamento}" var="model"
+						itemLabel="#{model.nome}" itemValue="#{model.idTipoApartamento}" />
+				</p:selectOneMenu>
+				
+			</h:panelGrid>
+
+			<p:fileUpload fileUploadListener="#{apartamentoBean.upload}"
+				required="true" label="Selecione os Arquivos" sizeLimit="1000000"
+				description="Selecione os arquivos" multiple="true"
+				dragDropSupport="true" mode="advanced"
+				invalidSizeMessage="Tamanha maior que o permitido!"
+				invalidFileMessage="Extensão não Permitida"
+				uploadLabel="Subir Arquivos" requiredMessage="Precisa de 2 Arquivos" fileLimit="4"/>
+				
+			<br/>
+			<p:commandButton icon="ui-icon-disk" title="#{msg['botao.salvar']}" value="#{msg['botao.salvar']}" actionListener="#{apartamentoBean.cadastrarApartamento}" />
+			<p:commandButton icon="ui-icon-cancel" title="#{msg['cancelar']}" value="#{msg['cancelar']}" actionListener="#{apartamentoBean.cancelarCadastro}" />
+		</p:dialog>
+	</h:form>
+
+
+					<!-- Confirmar exclusão --> 
+	<h:form id="dlgconf">
+		<p:confirmDialog message="#{msg['msg.confirmarExclusao']}" style="align:center;font-size:8pt;" hideEffect="explode"
+			header="#{msg['atencao']}" severity="alert" widgetVar="confirmation" modal="true">
+			<!--caso seja sim chamo o metodo excluir, e fecho o modal com o oncomplete, tenho o process que estou dizendo para processar o form, e update para atualizar a tabela-->
+			<p:commandButton id="btnSim" value="#{msg['botaoConfimar.sim']}" oncomplete="confirmation.hide();"
+				update=":formApartamento" actionListener="#{apartamentoBean.excluirApartamento}" />
+			<!--caso seja não somente fecha o modal-->
+			<p:commandButton id="btnNao" value="#{msg['botaoConfimar.nao']}" onclick="confirmation.hide();" type="button" />
+		</p:confirmDialog>
+	</h:form>
+	
+</h:body>
+</html>

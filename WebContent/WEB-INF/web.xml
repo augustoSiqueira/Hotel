@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xmlns="http://java.sun.com/xml/ns/javaee" 
+xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" version="3.0">
+ 
   <display-name>Hotel</display-name>
   <welcome-file-list>
     <welcome-file>index.xhtml</welcome-file>
@@ -63,5 +66,31 @@
 		<servlet-name>PdfServlet</servlet-name>
 		<url-pattern>/servlets/pdf</url-pattern>
 	</servlet-mapping>
+
+<!-- http://www.guj.com.br/java/212843-fileupload-prime-faces/2
+Leia o comentario do LucianoTulio, ele fala exatamente o que tem que fazer,
+e um detalhe, se não tiver os jars de commons isso não será possivel funcionar,
+porque o tomcat ou o próprio primefaces fica ignorando, dizendo que está faltando algo,
+entre no artigo e entenda melhor
+ -->
+	<filter>    
+	    <filter-name>PrimeFaces FileUpload Filter</filter-name>    
+	    <filter-class> org.primefaces.webapp.filter.FileUploadFilter</filter-class>    
+	    <init-param>  
+	      <param-name>uploadDirectory</param-name>  
+	      <param-value>  
+			C:\Users\Augusto Siqueira\Desktop  
+		  </param-value>  
+	    </init-param>  
+	    <init-param>  
+	      <param-name>thresholdSize</param-name>  
+	      <param-value>10000000</param-value>  
+	    </init-param>  
+    </filter>  
+      
+    <filter-mapping>    
+        <filter-name>PrimeFaces FileUpload Filter</filter-name>    
+        <servlet-name>Faces Servlet</servlet-name>    
+    </filter-mapping> 
   
 </web-app>

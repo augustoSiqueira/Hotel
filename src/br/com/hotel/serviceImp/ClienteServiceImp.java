@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import br.com.hotel.dao.ClienteDAO;
+import br.com.hotel.daoImp.ClienteDAOImp;
 import br.com.hotel.entity.Cliente;
 import br.com.hotel.service.ClienteService;
 
@@ -13,6 +14,10 @@ public class ClienteServiceImp implements ClienteService, Serializable{
 	private static final long serialVersionUID = 3970130452013349337L;
 	
 	private ClienteDAO clienteDAO;
+
+	public ClienteServiceImp() {
+		this.clienteDAO = new ClienteDAOImp();
+	}
 
 	@Override
 	public void inserir(Cliente objeto) {
@@ -49,7 +54,14 @@ public class ClienteServiceImp implements ClienteService, Serializable{
 	}
 
 	@Override
-	public List<Cliente> usarQUery(String query, Map<String, Object> parametros) {
+	public List<Cliente> usarQuery(String query, Map<String, Object> parametros) {
 		return this.clienteDAO.useQuery(query, parametros);
+	}
+
+	@Override
+	public List<Cliente> usarQUery(String query,
+			Map<String, Object> parametros, Integer indiceInicial,
+			Integer indiceFinal) {
+		return this.clienteDAO.useQuery(query, parametros,indiceInicial,indiceFinal);
 	}
 }

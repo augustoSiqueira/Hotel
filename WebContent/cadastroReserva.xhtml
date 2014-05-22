@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+	<title>reserva Web</title>
+	<link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+	<h:outputScript library="js" name="locale-primefaces.js" />
+</h:head>
+<h:body>
+
+<h:form id="idFormProcessDialog">
+
+		<p:ajaxStatus onstart="processandoDialog.show();"
+			onsuccess="processandoDialog.hide();" />
+		<p:dialog modal="true" widgetVar="processandoDialog"
+			header="#{msg['ajax.processando']}" draggable="false"
+			closable="false" style="font-size:8pt;" resizable="false">
+			<p:graphicImage value="/images/ajax_loader.gif" />
+		</p:dialog>
+
+	</h:form>
+
+<h:form id="formReserva" style="font-size:12px;width:98%;">
+
+
+	<p:growl id="idGrowl" showDetail="true" life="3000" autoUpdate="true"/>
+		
+	<p:commandButton  icon="ui-icon-disk" actionListener="#{reservaBean.abrirCadastroReserva}" 
+	value="#{msg['titulo.reserva.cadastrar']}" title="Cadastrar uma Reserva"/>
+
+	<p:spacer height="1" width="350"/>
+	<p:commandButton  icon="ui-icon-disk" actionListener="#{reservaBean.listarReservasCanceladas}" 
+	value="#{msg['titulo.reserva.canceladas']}" title="Listar reservas canceladas" update=":formReserva:tableReserva"/>
+	
+	<p:commandButton  icon="ui-icon-disk" actionListener="#{reservaBean.listarReservasEmEspera}" 
+	value="#{msg['titulo.reserva.espera']}" title="Listar reservas em espera" update=":formReserva:tableReserva"/>
+	
+	<p:commandButton  icon="ui-icon-disk" actionListener="#{reservaBean.listarReservaHospedado}" 
+	value="#{msg['titulo.reserva.hospedado']}" title="Listar reservas com exito" update=":formReserva:tableReserva"/>
+
+		<p:dataTable var="res" value="#{reservaBean.listaReserva}"
+			rowKey="#{res.idReservaHospedagem}" paginator="true" rows="10"
+			filterEvent="enter"	scrollRows="10" scrollable="true"
+			liveScroll="false" filteredValue="#{reservaBean.listaFiltroReserva}"
+			paginatorPosition="bottom" emptyMessage="#{msg['lista.vazia']}"
+			 id="tableReserva">
+
+			<f:facet name="header" style="font-size:12pt;">  
+            	#{msg['titulo.lista.reserva']}  
+        	</f:facet>
+
+			<p:column headerText="#{msg['reserva.situacao']}" sortBy="#{res.situacaoDaReserva}"
+				filterBy="#{res.situacaoDaReserva}">  
+            	#{res.situacaoDaReserva}  
+        	</p:column>
+        	
+        	<p:column headerText="#{msg['reserva.dataHoraEntrada']}" sortBy="#{res.dataHoraEntrada}"
+				filterBy="#{res.dataHoraEntrada}" rendered="#{reservaBean.mostrarDataHoraEntrada}">  
+            	#{res.dataHoraEntrada}  
+        	</p:column>
+        	
+        	<p:column headerText="#{msg['reserva.dataHoraSaida']}" sortBy="#{res.dataHoraSaida}"
+				filterBy="#{res.dataHoraSaida}" rendered="#{reservaBean.mostrarDataHoraEntrada}">  
+            	#{res.dataHoraSaida}  
+        	</p:column>
+        	
+        	<p:column headerText="#{msg['reserva.dataHoraPeriodoInicial']}" sortBy="#{res.dataHoraPeriodoInicial}"
+				filterBy="#{res.dataHoraPeriodoInicial}">  
+            	#{res.dataHoraPeriodoInicial}  
+        	</p:column>
+        	
+        	<p:column headerText="#{msg['reserva.dataHoraPeriodoFinal']}" sortBy="#{res.dataHoraPeriodoFinal}"
+				filterBy="#{res.dataHoraPeriodoFinal}">  
+            	#{res.dataHoraPeriodoFinal}  
+        	</p:column>
+        	
+        	<p:column headerText="#{msg['reserva.apt.hotel.nome']}" sortBy="#{res.apartamento.hotel.nomeHotel}"
+				filterBy="#{res.apartamento.hotel.nomeHotel}">  
+            	#{res.apartamento.hotel.nomeHotel}  
+        	</p:column>
+        	
+       		<p:column headerText="#{msg['reserva.apt.numeroApt']}" sortBy="#{res.apartamento.numeroApartamento}"
+				filterBy="#{res.apartamento.numeroApartamento}">  
+            	#{res.apartamento.numeroApartamento}  
+        	</p:column>
+
+        	
+        	<p:column headerText="#{msg['tabela.coluna.detalhe']}">
+	        	<center>
+					<p:commandButton icon="ui-icon-zoomin"
+						title="#{msg['titulo.botao.tabela.detalhe']}"
+						action="#{reservaBean.detalhesReserva}" ajax="true" update=":formDetalhes">
+						<f:setPropertyActionListener value="#{res}"
+							target="#{reservaBean.reservaSelecionado}" />
+					</p:commandButton>
+				</center>
+			</p:column>
+			
+			<p:column headerText="#{msg['tabela.coluna.editar']}">
+				<center>
+					<p:commandButton icon="ui-icon-pencil"
+						title="#{msg['titulo.botao.tabela.editar']}"
+						action="#{reservaBean.editarReserva}">
+						<f:setPropertyActionListener value="#{res}"
+							target="#{reservaBean.reservaSelecionado}" />
+					</p:commandButton>
+				</center>
+			</p:column>
+			
+			<p:column headerText="#{msg['tabela.coluna.excluir']}">
+				<center>
+			  		<p:column headerText="#{msg['tabela.coluna.excluir']}" style="text-align: center; max-width:50px; min-width:50px; overflow: hidden ">
+						<p:commandButton icon="ui-icon-minus" title="#{msg['titulo.botao.tabela.excluir']}" onclick="confirmation.show()" update=":formReserva:tableReserva">
+							<f:setPropertyActionListener value="#{res}" target="#{reservaBean.reservaSelecionado}" />
+						</p:commandButton>
+					</p:column>
+				</center>
+			</p:column>
+        </p:dataTable>
+</h:form>
+
+		<h:form id="formDetalhes" style="font-size:10px;">
+
+		<p:dialog draggable="false" header="#{msg['dialog.detalhes']}"
+			widgetVar="detalhesDialog" resizable="false" modal="true" width="66%"
+			height="400" showEffect="explode" hideEffect="explode"
+			style="font-size:8pt;" closable="true">
+
+			<h:panelGrid columns="2" cellpadding="4"
+				style="font-size:8pt;">
+
+			<h:panelGrid columns="2">		
+				<p:tabView>
+			        <p:tab title="Informações da Reserva">
+			            <h:panelGrid columns="2" cellpadding="2">
+			                <h:outputText value="#{msg['reserva.situacao2']}" />
+							<h:outputText value="#{reservaBean.reservaSelecionado.situacaoDaReserva}"/>
+				
+							<h:outputText value="#{msg['reserva.dataHoraEntrada2']}" />
+							<h:outputText
+								value="#{reservaBean.reservaSelecionado.dataHoraEntrada}">
+								<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"
+									timeZone="Etc/GMT+3" locale="pt_BR" />
+							</h:outputText>
+							
+							<h:outputText value="#{msg['reserva.dataHoraSaida2']}" />
+							<h:outputText
+								value="#{reservaBean.reservaSelecionado.dataHoraSaida}">
+								<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"
+									timeZone="Etc/GMT+3" locale="pt_BR" />
+							</h:outputText>
+							
+							<h:outputText value="#{msg['reserva.dataHoraPeriodoInicial2']}" />
+							<h:outputText
+								value="#{reservaBean.reservaSelecionado.dataHoraPeriodoInicial}">
+								<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"
+									timeZone="Etc/GMT+3" locale="pt_BR" />
+							</h:outputText>
+							
+							<h:outputText value="#{msg['reserva.dataHoraPeriodoFinal2']}" />
+							<h:outputText
+								value="#{reservaBean.reservaSelecionado.dataHoraPeriodoFinal}">
+								<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"
+									timeZone="Etc/GMT+3" locale="pt_BR" />
+							</h:outputText>						
+			            </h:panelGrid>
+			        </p:tab>
+			        
+			        <p:tab title="Informações do Cliente">
+			            <h:panelGrid columns="2" cellpadding="2">
+			                <h:outputText value="#{msg['reserva.cliente.nome']}" />
+							<h:outputText value="#{reservaBean.reservaSelecionado.cliente.nome}"/>
+							
+							<h:outputText value="#{msg['reserva.cliente.cpf']}" />
+							<h:outputText value="#{reservaBean.reservaSelecionado.cliente.cpf}"/>
+							
+							<h:outputText value="#{msg['reserva.cliente.rg']}" />
+							<h:outputText value="#{reservaBean.reservaSelecionado.cliente.rg}"/>
+							
+							<h:outputText value="#{msg['reserva.cliente.celular']}" />
+							<h:outputText value="#{reservaBean.reservaSelecionado.cliente.celular}"/>
+							
+							<h:outputText value="#{msg['reserva.cliente.telefone']}" />
+							<h:outputText value="#{reservaBean.reservaSelecionado.cliente.telefone}"/>
+			            </h:panelGrid>
+			            <br/>
+			            <p:fieldset legend="Endereço do Cliente" style="margin-bottom:20px">
+					        <h:panelGrid columns="2" cellpadding="2">
+					            <h:outputText value="#{msg['hotel.endereco.logradouro']}" />
+								<h:outputText value="#{reservaBean.reservaSelecionado.cliente.endereco.logradouro}"/>
+								
+								<h:outputText value="#{msg['hotel.endereco.bairro']}" />
+								<h:outputText value="#{reservaBean.reservaSelecionado.cliente.endereco.bairro}"/>
+								
+								<h:outputText value="#{msg['hotel.endereco.cidade']}" />
+								<h:outputText value="#{reservaBean.reservaSelecionado.cliente.endereco.cidade}"/>
+								
+								<h:outputText value="#{msg['hotel.endereco.cep']}" />
+								<h:outputText value="#{reservaBean.reservaSelecionado.cliente.endereco.cep}"/>
+								
+								<h:outputText value="#{msg['hotel.endereco.estado']}" />
+								<h:outputText value="#{reservaBean.reservaSelecionado.cliente.endereco.estado}"/>
+								
+								<h:outputText value="#{msg['hotel.endereco.numero']}" />
+								<h:outputText value="#{reservaBean.reservaSelecionado.cliente.endereco.numero}"/>
+								
+								<h:outputText value="#{msg['hotel.endereco.complemento']}" />
+								<h:outputText value="#{reservaBean.reservaSelecionado.cliente.endereco.complemento}"/>
+					        </h:panelGrid>
+					    </p:fieldset>
+			        </p:tab>
+			        
+			        <p:tab title="Informações do Hotel">
+			            <h:panelGrid columns="2" cellpadding="2">
+			                	<h:outputText value="#{msg['reserva.apt.hotel.nome2']}" />
+								<h:outputText value="#{reservaBean.reservaSelecionado.apartamento.hotel.nomeHotel}"/>
+								
+								<h:outputText value="#{msg['hotel.cnpj2']}" />
+								<h:outputText value="#{reservaBean.reservaSelecionado.apartamento.hotel.cnpj}"/>
+			            </h:panelGrid>
+			            
+			            <br/>
+					    	<p:fieldset legend="Endereço do Hotel">
+								<h:panelGrid columns="2" cellpadding="2">
+							    	<h:outputText value="#{msg['hotel.endereco.logradouro']}" />
+									<h:outputText value="#{reservaBean.reservaSelecionado.apartamento.hotel.endereco.logradouro}"/>
+										
+									<h:outputText value="#{msg['hotel.endereco.bairro']}" />
+									<h:outputText value="#{reservaBean.reservaSelecionado.apartamento.hotel.endereco.bairro}"/>
+										
+									<h:outputText value="#{msg['hotel.endereco.cidade']}" />
+									<h:outputText value="#{reservaBean.reservaSelecionado.apartamento.hotel.endereco.cidade}"/>
+										
+									<h:outputText value="#{msg['hotel.endereco.cep']}" />
+									<h:outputText value="#{reservaBean.reservaSelecionado.apartamento.hotel.endereco.cep}"/>
+										
+									<h:outputText value="#{msg['hotel.endereco.estado']}" />
+									<h:outputText value="#{reservaBean.reservaSelecionado.apartamento.hotel.endereco.estado}"/>
+										
+									<h:outputText value="#{msg['hotel.endereco.numero']}" />
+									<h:outputText value="#{reservaBean.reservaSelecionado.apartamento.hotel.endereco.numero}"/>
+										
+									<h:outputText value="#{msg['hotel.endereco.complemento']}" />
+									<h:outputText value="#{reservaBean.reservaSelecionado.apartamento.hotel.endereco.complemento}"/>
+								</h:panelGrid>
+							</p:fieldset>
+			        </p:tab>
+			        
+			        
+			        <p:tab title="Informações do Apartamento">
+			         	<h:panelGrid columns="2" cellpadding="2">
+			                <h:outputText value="#{msg['apartamento.andar2']}" />
+							<h:outputText value="#{reservaBean.reservaSelecionado.apartamento.andar}"/>
+								
+			                <h:outputText value="#{msg['apartamento.numeroApt']}" />
+							<h:outputText value="#{reservaBean.reservaSelecionado.apartamento.numeroApartamento}"/>
+							
+							<h:outputText value="#{msg['apartamento.qntQuartos']}" />
+							<h:outputText value="#{reservaBean.reservaSelecionado.apartamento.quantidadeQuartos}"/>
+							
+							<p:commandButton icon="ui-icon-image" title="Clique aqui para ver imagens do apartamento"
+							value="Imagens do Apartamento" actionListener="#{reservaBean.mostrarImagensApartamento}" />
+			            </h:panelGrid>
+			            
+			           	<br/>
+					    	<p:fieldset legend="Tipo do Apartamento">
+								<h:panelGrid columns="2" cellpadding="2">
+							    	<h:outputText value="#{msg['apartamento.tipoApartamento.nome']}" />
+									<h:outputText value="#{reservaBean.reservaSelecionado.apartamento.tipoApartamento.nome}"/>
+									
+									<h:outputText value="#{msg['apartamento.tipoApartamento.descricao']}" />
+									<h:outputText value="#{reservaBean.reservaSelecionado.apartamento.tipoApartamento.descricao}"/>
+									
+									<h:outputText value="#{msg['apartamento.tipoApartamento.valorDoApartamento']}" />
+									<h:outputText value="#{reservaBean.reservaSelecionado.apartamento.tipoApartamento.valorDoApartamento}"/>
+								</h:panelGrid>
+							</p:fieldset>
+ 
+			        </p:tab>
+			    </p:tabView>
+
+			</h:panelGrid>
+				
+			</h:panelGrid>
+		</p:dialog>
+	</h:form>
+
+
+	<h:form id="formAlterar" style="font-size:10px;">
+
+		<p:dialog draggable="false" header="#{msg['dialog.alterar']}"
+			widgetVar="alterarDialog" resizable="false" modal="true" width="25%"
+			height="180" showEffect="explode" hideEffect="explode"
+			style="font-size:8pt;" closable="true">
+
+			<h:panelGrid id="display" columns="2" cellpadding="4"
+				style="font-size:8pt;">
+
+			<h:panelGrid columns="2">
+				<h:outputText value="#{msg['apartamento.numeroApt']}" />
+				<p:inputText value="#{apartamentoBean.numeroApartamento}" />
+	
+				<h:outputText value="#{msg['apartamento.andar2']}" />
+				<p:inputText value="#{apartamentoBean.apartamentoSelecionado.andar}" />
+
+				<h:outputText value="#{msg['apartamento.qntQuartos']}" />
+				<p:spinner value="#{apartamentoBean.quantidadeQuartos}" min="1" max="5" size="17" />
+				
+				<h:outputText value="#{msg['apartamento.tipoapartamento']}" />
+				<p:selectOneMenu style="width:145px; font-size:8pt;"
+					value="#{apartamentoBean.idTipoApartamento}" effect="clip" >
+					<f:selectItem itemLabel="" itemValue="0" />
+					<f:selectItems value="#{apartamentoBean.listaTipoApartamento}" var="model"
+						itemLabel="#{model.nome}" itemValue="#{model.idTipoApartamento}" />
+				</p:selectOneMenu>
+			</h:panelGrid>
+			<br/>
+<!-- 			<h:panelGrid columns="4"  -->
+<!-- 				style="font-size:8pt;"> -->
+			
+<!-- 				<h:panelGrid columns="4"/> -->
+<!-- 				<p:fileUpload id="imagem" fileUploadListener="#{apartamentoBean.upload}" -->
+<!-- 				required="true" label="Selecione os Arquivos" sizeLimit="1000000" -->
+<!-- 				description="Selecione os arquivos" multiple="true" -->
+<!-- 				dragDropSupport="true" mode="advanced" disabled="#{apartamentoBean.mudarImagem}" -->
+<!-- 				invalidSizeMessage="Tamanha maior que o permitido!" -->
+<!-- 				invalidFileMessage="Extensão não Permitida" -->
+<!-- 				uploadLabel="Subir Arquivos" requiredMessage="Precisa de 2 Arquivos" fileLimit="4"/> -->
+				
+<!-- 				<p:commandButton rendered="#{apartamentoBean.mudarImagem}" icon="ui-icon-pencil" title="#{msg['alterar.imagem']}" value="#{msg['alterar.imagem']}" actionListener="#{apartamentoBean.alterarImagem}" /> -->
+<!-- 			</h:panelGrid> -->
+			</h:panelGrid>
+				
+				<br/>
+			<p:commandButton icon="ui-icon-disk" title="#{msg['botao.salvar']}" value="#{msg['botao.salvar']}" actionListener="#{apartamentoBean.alterarApartamento}" />
+			
+		</p:dialog>
+	</h:form>
+
+	<h:form id="formCadastro" style="font-size:10px;">
+
+		<p:dialog draggable="false" header="#{msg['dialog.cadastrar']}"
+			widgetVar="cadastroDialog" resizable="false" modal="true" width="56%"
+			height="600" showEffect="explode" hideEffect="explode"
+			style="font-size:8pt;">
+
+			<h:panelGrid columns="2" cellpadding="4"
+				style="font-size:8pt;">
+
+				<h:outputText value="#{msg['apartamento.numeroApt']}" />
+				<p:inputText value="#{apartamentoBean.numeroApartamento}" />
+	
+				<h:outputText value="#{msg['apartamento.andar2']}" />
+				<p:inputText value="#{apartamentoBean.apartamento.andar}" />
+
+				<h:outputText value="#{msg['apartamento.qntQuartos']}" />
+				<p:spinner value="#{apartamentoBean.quantidadeQuartos}" min="1" max="5" />
+				
+				<h:outputText value="#{msg['apartamento.tipoapartamento']}" />
+				<p:selectOneMenu style="heigth:140px; font-size:8pt;"
+					value="#{apartamentoBean.idTipoApartamento}" effect="clip">
+					<f:selectItem itemLabel="" itemValue="0" />
+					<f:selectItems value="#{apartamentoBean.listaTipoApartamento}" var="model"
+						itemLabel="#{model.nome}" itemValue="#{model.idTipoApartamento}" />
+				</p:selectOneMenu>
+				
+			</h:panelGrid>
+
+			<p:fileUpload fileUploadListener="#{apartamentoBean.upload}"
+				required="true" label="Selecione os Arquivos" sizeLimit="1000000"
+				description="Selecione os arquivos" multiple="true"
+				dragDropSupport="true" mode="advanced"
+				invalidSizeMessage="Tamanha maior que o permitido!"
+				invalidFileMessage="Extensão não Permitida"
+				uploadLabel="Subir Arquivos" requiredMessage="Precisa de 2 Arquivos" fileLimit="4"/>
+				
+			<br/>
+			<p:commandButton icon="ui-icon-disk" title="#{msg['botao.salvar']}" value="#{msg['botao.salvar']}" actionListener="#{apartamentoBean.cadastrarApartamento}" />
+			<p:commandButton icon="ui-icon-cancel" title="#{msg['cancelar']}" value="#{msg['cancelar']}" actionListener="#{apartamentoBean.cancelarCadastro}" />
+		</p:dialog>
+	</h:form>
+
+
+	<h:form id="formImagem" style="font-size:10px;">
+			<p:dialog draggable="false" header="Imagens do Apartamento"
+			widgetVar="imagemDialog" resizable="false" modal="true"
+			showEffect="explode" hideEffect="explode"
+			style="font-size:8pt;">
+
+			<h:panelGrid columns="1">
+				<p:imageSwitch effect="fade" style="width:400px;height:288px;">
+					<ui:repeat value="#{reservaBean.listaImagensApartamento}"
+						var="image">
+						<p:graphicImage value="/imagesApartamento/#{image.url}"
+							width="400" height="288" title="Imagens do Apartamento" />
+					</ui:repeat>
+				</p:imageSwitch>
+			</h:panelGrid>
+
+
+		</p:dialog>
+	</h:form>
+
+					<!-- Confirmar exclusão --> 
+	<h:form id="dlgconf">
+		<p:confirmDialog message="#{msg['msg.confirmarExclusao']}" style="align:center;font-size:8pt;" hideEffect="explode"
+			header="#{msg['atencao']}" severity="alert" widgetVar="confirmation" modal="true">
+			<!--caso seja sim chamo o metodo excluir, e fecho o modal com o oncomplete, tenho o process que estou dizendo para processar o form, e update para atualizar a tabela-->
+			<p:commandButton id="btnSim" value="#{msg['botaoConfimar.sim']}" oncomplete="confirmation.hide();"
+				update=":formReserva" actionListener="#{apartamentoBean.excluirApartamento}" />
+			<!--caso seja não somente fecha o modal-->
+			<p:commandButton id="btnNao" value="#{msg['botaoConfimar.nao']}" onclick="confirmation.hide();" type="button" />
+		</p:confirmDialog>
+	</h:form>
+
+</h:body>
+</html>

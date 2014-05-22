@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import br.com.hotel.dao.TipoApartamentoDAO;
-import br.com.hotel.entity.Hotel;
+import br.com.hotel.daoImp.TipoApartamentoDAOImp;
 import br.com.hotel.entity.TipoApartamento;
 import br.com.hotel.service.TipoApartamentoService;
 
@@ -15,6 +15,10 @@ public class TipoApartamentoServiceImp implements TipoApartamentoService, Serial
 	
 	private TipoApartamentoDAO tipoApartamentoDAO;
 
+	public TipoApartamentoServiceImp (){
+		this.tipoApartamentoDAO = new TipoApartamentoDAOImp();
+	}
+	
 	@Override
 	public void inserir(TipoApartamento objeto) {
 		this.tipoApartamentoDAO.inserir(objeto);
@@ -42,7 +46,7 @@ public class TipoApartamentoServiceImp implements TipoApartamentoService, Serial
 	}
 
 	@Override
-	public List<TipoApartamento> usarQUery(String query,
+	public List<TipoApartamento> usarQuery(String query,
 			Map<String, Object> parametros) {
 		return this.tipoApartamentoDAO.useQuery(query, parametros);
 	}
@@ -53,5 +57,12 @@ public class TipoApartamentoServiceImp implements TipoApartamentoService, Serial
 		if(objeto != null){
 			this.tipoApartamentoDAO.removerPorId(id);
 		}
+	}
+
+	@Override
+	public List<TipoApartamento> usarQUery(String query,
+			Map<String, Object> parametros, Integer indiceInicial,
+			Integer indiceFinal) {
+		return this.tipoApartamentoDAO.useQuery(query, parametros,indiceInicial,indiceFinal);
 	}
 }

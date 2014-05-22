@@ -17,5 +17,8 @@ public interface GenericoService<T> {
 
 	public List<T> listar();
 
-	public List<T> usarQUery(String query, Map<String, Object> parametros);
+	public List<T> usarQuery(String query, Map<String, Object> parametros);
+	
+	public List<T> usarQUery(String query, Map<String, Object> parametros,
+			Integer indiceInicial, Integer indiceFinal);
 }

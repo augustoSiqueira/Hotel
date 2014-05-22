@@ -1,6 +1,7 @@
 package br.com.hotel.entity;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -27,12 +29,22 @@ public class Apartamento implements Serializable {
 	@Column(name = "NumeroApartamento")
 	private Integer numeroApartamento;
 	
+	@Column(name = "QuantidadeQuartos")
+	private Integer quantidadeQuartos;
+	
 	@ManyToOne
-	@JoinColumn(name = "TipoApartamento")
+	@JoinColumn(name = "TipoApartamento", referencedColumnName = "idTipoApartamento")
 	private TipoApartamento tipoApartamento;
 	
 	@Column(name = "Ativo", nullable = false)
 	private boolean ativo;
+	
+	@OneToMany
+	private List<ImagemApartamento> imagemApartamento;
+	
+	@ManyToOne
+	@JoinColumn(name = "Hotel", referencedColumnName = "idHotel")
+	private Hotel hotel;
 	
 	public Apartamento() {
 		super();
@@ -62,6 +74,14 @@ public class Apartamento implements Serializable {
 		this.numeroApartamento = numeroApartamento;
 	}
 
+	public Integer getQuantidadeQuartos() {
+		return quantidadeQuartos;
+	}
+
+	public void setQuantidadeQuartos(Integer quantidadeQuartos) {
+		this.quantidadeQuartos = quantidadeQuartos;
+	}
+
 	public TipoApartamento getTipoApartamento() {
 		return tipoApartamento;
 	}
@@ -76,5 +96,21 @@ public class Apartamento implements Serializable {
 
 	public void setAtivo(boolean ativo) {
 		this.ativo = ativo;
+	}
+
+	public Hotel getHotel() {
+		return hotel;
+	}
+
+	public void setHotel(Hotel hotel) {
+		this.hotel = hotel;
+	}
+
+	public List<ImagemApartamento> getImagemApartamento() {
+		return imagemApartamento;
+	}
+
+	public void setImagemApartamento(List<ImagemApartamento> imagemApartamento) {
+		this.imagemApartamento = imagemApartamento;
 	}
 }

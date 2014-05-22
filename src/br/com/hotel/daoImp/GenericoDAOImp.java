@@ -8,13 +8,12 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import br.com.hotel.dao.GenericoDAO;
+import br.com.hotel.util.JPAUtil;
   
 /**
  * PSC
@@ -28,8 +27,7 @@ public abstract class GenericoDAOImp<Entidade> implements GenericoDAO<Entidade>{
   
     @SuppressWarnings("unchecked")
     public GenericoDAOImp(){
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("unitFutebol");
-        entityManager = emf.createEntityManager();
+        entityManager = JPAUtil.getEntityManager();
           
         ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();  
         classePersistente = (Class<Entidade>) parameterizedType.getActualTypeArguments()[0];  
@@ -50,11 +48,13 @@ public abstract class GenericoDAOImp<Entidade> implements GenericoDAO<Entidade>{
             objeto = getEntityManager().merge(objeto);
               
             tx.commit();
+            
               
         } catch (Exception e) {
             e.printStackTrace();
             if (tx != null && tx.isActive()){
                 tx.rollback();
+                
             }
         }
     }
@@ -70,11 +70,13 @@ public abstract class GenericoDAOImp<Entidade> implements GenericoDAO<Entidade>{
             tx.begin();
             getEntityManager().persist(objeto);
             tx.commit();
+            
             System.out.println(classePersistente.getSimpleName() + " salvo com sucesso");
         } catch (Exception e) {
             e.printStackTrace();
             if (tx != null && tx.isActive()){
                 tx.rollback();
+                
             }
         }
     }
@@ -95,12 +97,13 @@ public abstract class GenericoDAOImp<Entidade> implements GenericoDAO<Entidade>{
             }
               
             tx.commit();
-              
+            
             System.out.println(classePersistente.getSimpleName() + " salvos com sucesso: " + colecao.size());
         } catch (Exception e) {
             e.printStackTrace();
             if (tx != null && tx.isActive()){
                 tx.rollback();
+                
             }
         }
     }
@@ -120,12 +123,13 @@ public abstract class GenericoDAOImp<Entidade> implements GenericoDAO<Entidade>{
             getEntityManager().remove(objeto);
               
             tx.commit();
-              
+            
             System.out.println(classePersistente.getSimpleName() + " removido com sucesso");
         } catch (Exception e){
             e.printStackTrace();
             if (tx != null && tx.isActive()){
                 tx.rollback();
+                
             }
         }
     }
@@ -141,9 +145,10 @@ public abstract class GenericoDAOImp<Entidade> implements GenericoDAO<Entidade>{
 	public void removerPorId(Integer id) {
 		Entidade objeto = this.consultarPorId(id);
 		if (objeto != null) {
-			objeto = entityManager.merge(objeto);
+			objeto = getEntityManager().merge(objeto);
 			entityManager.remove(objeto);
 		}
+		
 	}
 	
 	public List<Type> findParameter(String query) {
@@ -151,9 +156,10 @@ public abstract class GenericoDAOImp<Entidade> implements GenericoDAO<Entidade>{
 			return null;
 		}
 		
-		Query  q = entityManager.createQuery(query);
-				
-		return q.getResultList();
+		Query  q = getEntityManager().createQuery(query);
+		List<Type> resultado = q.getResultList();
+		
+		return resultado;
 	}
 
 
@@ -168,6 +174,7 @@ public abstract class GenericoDAOImp<Entidade> implements GenericoDAO<Entidade>{
         Entidade instance = null;
         try {
             instance = (Entidade) getEntityManager().find(classePersistente, chave);
+            
         } catch (RuntimeException re) {
             re.printStackTrace();
         }
@@ -177,8 +184,10 @@ public abstract class GenericoDAOImp<Entidade> implements GenericoDAO<Entidade>{
     public List<Entidade> consultarTodos() {
         try {
             String sql = "from " + classePersistente.getSimpleName();
-            TypedQuery<Entidade> query = entityManager.createQuery(sql, classePersistente);
-            return query.getResultList();
+            TypedQuery<Entidade> query = getEntityManager().createQuery(sql, classePersistente);
+            List<Entidade> resultado = query.getResultList();
+            
+            return resultado;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -191,7 +200,7 @@ public abstract class GenericoDAOImp<Entidade> implements GenericoDAO<Entidade>{
     
 	@Override
 	public List<Entidade> useQuery(String query, Map<String, Object> parametros) {
-		Query q = this.entityManager.createQuery(query);
+		Query q = getEntityManager().createQuery(query);
 		
 		if(parametros != null){
 			Iterator<String> iterador = parametros.keySet().iterator();
@@ -200,13 +209,15 @@ public abstract class GenericoDAOImp<Entidade> implements GenericoDAO<Entidade>{
 				q.setParameter(chave,parametros.get(chave));
 			}
 		}
-		return q.getResultList();		
+		List<Entidade> r = q.getResultList();
+		
+		return r;		
 	}
 	
 	@Override
 	public List<Entidade> useQuery(String query, Map<String, Object> parametros,
 			Integer indiceInicial, Integer indiceFinal) {
-		Query q = this.entityManager.createQuery(query);
+		Query q = getEntityManager().createQuery(query);
 		
 		if(parametros != null){
 			Iterator<String> iterador = parametros.keySet().iterator();
@@ -217,7 +228,9 @@ public abstract class GenericoDAOImp<Entidade> implements GenericoDAO<Entidade>{
 		}
 		q.setFirstResult(indiceInicial);
 		q.setMaxResults(indiceFinal);
-		return q.getResultList();		
+		List<Entidade> r = q.getResultList();
+		
+		return r;		
 	}
 
   
@@ -242,6 +255,7 @@ public abstract class GenericoDAOImp<Entidade> implements GenericoDAO<Entidade>{
     }
   
     public EntityManager getEntityManager() {
+//    	entityManager = JPAUtil.getEntityManager();
         return entityManager;
     }        
 } 
